@@ -29,10 +29,7 @@ export class AccountApiService {
   private REST_API_SERVER = 'http://localhost:8080';
 
   public createAccount(model: AccountAddApi.Request) {
-    const url =
-      model.professional !== 'BRANCH_MANAGER'
-        ? `${this.REST_API_SERVER}/v1/auth/accounts/staff?professional=${model.professional}&branchId=${model.branch}`
-        : `${this.REST_API_SERVER}/v1/auth/accounts/manager?branchId=${model.branch}`;
+    const url = `${this.REST_API_SERVER}/v1/auth/accounts/manager?branchId=`;
     return this._http
       .post<any>(url, model, this.httpOptions)
       .pipe(catchError(this.handleError));

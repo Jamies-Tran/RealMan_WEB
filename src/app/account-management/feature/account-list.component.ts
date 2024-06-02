@@ -216,7 +216,6 @@ export class AccountListComponent {
     const form = this._fb.group<AccountAddApi.RequestFormGroup>({
       firstName: this._fb.control('', trimRequired),
     lastName: this._fb.control('', [trimRequired]),
-    address: this._fb.control('', trimRequired),
     dob: this._fb.control('', Validators.required),
     gender: this._fb.control('', Validators.required),
     phone: this._fb.control('', [
@@ -225,10 +224,10 @@ export class AccountListComponent {
       Validators.maxLength(10),
     ]),
     professional: this._fb.control(''),
-    branch: this._fb.control(-1),
-    thumbnailUrl: this._fb.control('123'),
-    branchAddress: this._fb.control({ value: '', disabled: true }),
-    numberStaffs: this._fb.control({ value: null, disabled: true }),
+    thumbnail: this._fb.control('123'),
+    professionalTypeCode: this._fb.control(''),
+    professionalTypeName: this._fb.control(''),
+    staffCode: this._fb.control(''),
     });
 
 

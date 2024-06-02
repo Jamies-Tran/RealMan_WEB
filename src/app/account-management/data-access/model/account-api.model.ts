@@ -6,26 +6,26 @@ export namespace AccountAddApi {
     firstName: string;
     lastName: string;
     phone: string;
-    address: string;
-    gender: string;
+    staffCode: string;
+    professionalTypeCode: string;
+    professionalTypeName: string;
+    role: string;
+    thumbnail: string;
     dob: string;
-    branch: number;
-    professional: string;
-    thumbnailUrl: string;
+    gender: string;
   }
 
   export type RequestFormGroup = {
     firstName: FormControl<string>;
     lastName: FormControl<string>;
     phone: FormControl<string>;
-    address: FormControl<string>;
     gender: FormControl<string>;
     dob: FormControl<string>;
-    branch: FormControl<number>;
     professional: FormControl<string>;
-    thumbnailUrl: FormControl<string>;
-    branchAddress: FormControl<string>;
-    numberStaffs: FormControl<number | null>;
+    thumbnail: FormControl<string>;
+    professionalTypeCode: FormControl<string>;
+    professionalTypeName: FormControl<string>;
+    staffCode: FormControl<string>;
   };
 }
 
@@ -92,26 +92,26 @@ export namespace AccountUpdateApi {
     firstName: string;
     lastName: string;
     phone: string;
-    address: string;
-    gender: string;
+    staffCode: string;
+    professionalTypeCode: string;
+    professionalTypeName: string;
+    role: string;
+    thumbnail: string;
     dob: string;
-    branch: number;
-    professional: string;
-    thumbnailUrl: string;
+    gender: string;
   }
 
   export type RequestFormGroup = {
     firstName: FormControl<string>;
     lastName: FormControl<string>;
     phone: FormControl<string>;
-    address: FormControl<string>;
     gender: FormControl<string>;
     dob: FormControl<string>;
-    branch: FormControl<number>;
     professional: FormControl<string>;
-    thumbnailUrl: FormControl<string>;
-    branchAddress: FormControl<string>;
-    numberStaffs: FormControl<number | null>;
+    thumbnail: FormControl<string>;
+    professionalTypeCode: FormControl<string>;
+    professionalTypeName: FormControl<string>;
+    staffCode: FormControl<string>;
   };
 
   export interface Response {

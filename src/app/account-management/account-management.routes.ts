@@ -16,15 +16,5 @@ const ACCOUNT_MANAGEMENT_ROUTES: Route[] = [
         (m) => m.AccountListComponent
       ),
   },
-  {
-    path: 'create-account',
-    loadComponent: () =>
-      import('./feature/account.component').then((m) => m.AccountComponent),
-  },
-  {
-    path: 'detail-account',
-    loadComponent: () =>
-      import('./feature/account-update.component').then((m) => m.AccountUpdateComponent),
-  },
 ];
 export default ACCOUNT_MANAGEMENT_ROUTES;

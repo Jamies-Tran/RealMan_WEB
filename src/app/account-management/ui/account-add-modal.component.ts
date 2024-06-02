@@ -8,7 +8,7 @@ import { NzIconModule } from 'ng-zorro-antd/icon';
 import { NzImageModule } from 'ng-zorro-antd/image';
 import { NzCheckboxModule } from 'ng-zorro-antd/checkbox';
 import { RxLet } from '@rx-angular/template/let';
-import { NzModalRef } from 'ng-zorro-antd/modal';
+import { NzModalModule, NzModalRef } from 'ng-zorro-antd/modal';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { AccountAddApi, AccountUpdateApi } from '../data-access/model/account-api.model';
 import { differenceInCalendarDays } from 'date-fns';
@@ -31,7 +31,8 @@ import { NzDividerModule } from 'ng-zorro-antd/divider';
     NzCheckboxModule,
     RxLet,
     NzDatePickerModule,
-    NzDividerModule
+    NzDividerModule,
+    NzModalModule
   ],
   template: `
     <div>
@@ -68,12 +69,12 @@ import { NzDividerModule } from 'ng-zorro-antd/divider';
           <!-- dia chi -->
 
           <nz-form-item nz-col nzSpan="12" class="">
-            <nz-form-label class="tw-ml-3" nzRequired>Địa chỉ</nz-form-label>
-            <nz-form-control nzErrorTip="Vui lòng nhập địa chỉ">
+            <nz-form-label class="tw-ml-3" nzRequired>Mã nhân viên</nz-form-label>
+            <nz-form-control nzErrorTip="Vui lòng nhập mã nhân viên">
             <input
                 class="tw-rounded-md tw-w-[70%]"
-                placeholder="Nhập địa chỉ"
-                [formControl]="form.controls.address"
+                placeholder="Nhập mã nhân viên"
+                [formControl]="form.controls.staffCode"
                 nz-input
               />
               <!-- <nz-autocomplete
@@ -146,7 +147,7 @@ import { NzDividerModule } from 'ng-zorro-antd/divider';
             </nz-form-control>
           </nz-form-item>
         </div>
-        <nz-divider></nz-divider>
+        <!-- <nz-divider></nz-divider> -->
 
         <div nz-row class="tw-ml-[12%]">
           <!-- <nz-form-item nz-col nzSpan="12" class="">
@@ -168,21 +169,21 @@ import { NzDividerModule } from 'ng-zorro-antd/divider';
               </nz-select>
             </nz-form-control>
           </nz-form-item> -->
-          <nz-form-item nz-col nzSpan="12" class="">
+          <!-- <nz-form-item nz-col nzSpan="12" class="">
             <nz-form-label class="tw-ml-3">Địa chỉ chi nhánh</nz-form-label>
             <nz-form-control>
               <input class="tw-rounded-md tw-w-[70%]" nz-input [formControl]="form.controls.branchAddress" />
             </nz-form-control>
-          </nz-form-item>
+          </nz-form-item> -->
           <!-- ca -->
-          <nz-form-item nz-col nzSpan="12" class="">
+          <!-- <nz-form-item nz-col nzSpan="12" class="">
             <nz-form-label class="tw-ml-3"
               >Số lượng nhân viên của chi nhánh</nz-form-label
             >
             <nz-form-control>
             <input class="tw-rounded-md tw-w-[70%]" nz-input [formControl]="form.controls.numberStaffs" />
             </nz-form-control>
-          </nz-form-item>
+          </nz-form-item> -->
           <!-- chuc vu -->
           <nz-form-item nz-col nzSpan="12" class="">
             <nz-form-label class="tw-ml-3" nzRequired>Chức vụ</nz-form-label>
@@ -207,10 +208,10 @@ import { NzDividerModule } from 'ng-zorro-antd/divider';
         </div>
       </form>
     </div>
-    <!-- <div *nzModalFooter>
-      <button nz-button nzType="default" (click)="onDestroyModal()">{{ 'CANCEL' | translate }}</button>
-      <button nz-button nzType="primary" (click)="onSubmit()" [disabled]="form.invalid">{{ 'SUBMIT' | translate }}</button>
-    </div> -->
+    <div *nzModalFooter>
+      <button nz-button nzType="default" (click)="onDestroyModal()">Trở lại</button>
+      <button nz-button nzType="primary" (click)="onSubmit()" [disabled]="form.invalid">Ok</button>
+    </div>
   `,
   styles: [],
   changeDetection: ChangeDetectionStrategy.OnPush,

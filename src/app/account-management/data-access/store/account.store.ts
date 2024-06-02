@@ -90,7 +90,6 @@ export class AccountStore extends ComponentStore<AccountState> {
   >({
     firstName: this._fb.control('', trimRequired),
     lastName: this._fb.control('', [trimRequired]),
-    address: this._fb.control('', trimRequired),
     dob: this._fb.control('', Validators.required),
     gender: this._fb.control('', Validators.required),
     phone: this._fb.control('', [
@@ -99,10 +98,10 @@ export class AccountStore extends ComponentStore<AccountState> {
       Validators.maxLength(10),
     ]),
     professional: this._fb.control(''),
-    branch: this._fb.control(-1),
-    thumbnailUrl: this._fb.control('123'),
-    branchAddress: this._fb.control({ value: '', disabled: true }),
-    numberStaffs: this._fb.control({ value: null, disabled: true }),
+    thumbnail: this._fb.control('123'),
+    professionalTypeCode: this._fb.control(''),
+    professionalTypeName: this._fb.control(''),
+    staffCode: this._fb.control(''),
   });
 
   readonly getAccountPaging = this.effect<never>(
@@ -180,23 +179,23 @@ export class AccountStore extends ComponentStore<AccountState> {
     )
   );
 
-  readonly getBranchData = this.effect<number>(
-    pipe(
-      tap(() => this.updateLoading(true)),
-      switchMap((branchId) =>
-        this._cApiSvc.getBranchAddress(branchId).pipe(
-          tap({
-            next: (resp) => {
-              this.form.controls.branchAddress.setValue(resp.value.address);
-              this.form.controls.numberStaffs.setValue(resp.value.numberStaffs);
-            },
-            finalize: () => this.updateLoading(false),
-          }),
-          catchError(() => EMPTY)
-        )
-      )
-    )
-  );
+  // readonly getBranchData = this.effect<number>(
+  //   pipe(
+  //     tap(() => this.updateLoading(true)),
+  //     switchMap((branchId) =>
+  //       this._cApiSvc.getBranchAddress(branchId).pipe(
+  //         tap({
+  //           next: (resp) => {
+  //             this.form.controls.branchAddress.setValue(resp.value.address);
+  //             this.form.controls.numberStaffs.setValue(resp.value.numberStaffs);
+  //           },
+  //           finalize: () => this.updateLoading(false),
+  //         }),
+  //         catchError(() => EMPTY)
+  //       )
+  //     )
+  //   )
+  // );
 
   readonly getAddress = this.effect<string>(($params) =>
     $params.pipe(
