@@ -68,7 +68,7 @@ import { NzDropDownModule } from 'ng-zorro-antd/dropdown';
 
           <!-- quản lí chi nhánh -->
 
-          <li nz-submenu nzTitle="Quản lý chi nhánh" nzIcon="team" *ngIf="role == 'SHOP_OWNER'">
+          <li nz-submenu nzTitle="Quản lý chi nhánh" nzIcon="team">
             <ul>
               <li
                 nz-menu-item
