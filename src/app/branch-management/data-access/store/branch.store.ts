@@ -82,20 +82,16 @@ export class BranchStore
   form = this._fb.group<BranchApi.RequestFormGroup>({
     shopOwnerId: this._fb.control(localStorage.getItem('accountId$')!),
     branchName: this._fb.control('', trimRequired),
-    phone: this._fb.control('', [
+    branchHotline: this._fb.control('', [
       Validators.minLength(10),
       Validators.maxLength(10),
       trimRequired,
     ]),
-    address: this._fb.control('', trimRequired),
-    status: this._fb.control('OPEN'),
-    numberStaffs: this._fb.control(0, [Validators.min(1), Validators.max(100)]),
+    branchAddress: this._fb.control('', trimRequired),
     open: this._fb.control(null, Validators.required),
     close: this._fb.control(null, Validators.required),
-    branchDisplayList: this._fb.control([]),
-    branchServiceList: this._fb.control([]),
-    thumbnailUrl: this._fb.control('123', trimRequired),
-    serviceArray: this._fb.control([]),
+    branchDisplays: this._fb.control([]),
+    branchThumbnail: this._fb.control('123', trimRequired),
   });
 
   readonly getBranchPaging = this.effect<never>(

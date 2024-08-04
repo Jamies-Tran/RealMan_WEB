@@ -103,7 +103,6 @@ import { NzMessageService } from 'ng-zorro-antd/message';
                 <th>Địa chỉ</th>
                 <th>Hotline</th>
                 <th>Trạng thái</th>
-                <th>Số lượng nhân viên</th>
                 <th></th>
               </tr>
             </thead>
@@ -111,16 +110,24 @@ import { NzMessageService } from 'ng-zorro-antd/message';
               <tr *ngFor="let data of vm.branchPaging.content; index as i">
                 <td>{{ i + 1 }}</td>
                 <td>{{ data.branchName }}</td>
-                <td>{{ data.address }}</td>
-                <td>{{ data.phone }}</td>
-                <td>{{ data.status }}</td>
-                <td>{{ data.numberStaffs }}</td>
+                <td>{{ data.branchStreet + ', ' + data.branchWard + ', ' + data.branchDistrict + ', ' + data.branchProvince }}</td>
+                <td></td>
+                <td>{{ data.branchStatusName }}</td>
                 <td class="tw-text-center">
-                  <button
+                <button
+                    *ngIf="data.branchStatusCode === 'INACTIVE'"
                     nz-button
                     nzType="primary"
-                    [routerLink]="['/branch-management', data.branchId]" nzSize="small"
-                  >Edit</button>
+                    nzDanger=""
+                     nzSize="small"
+                  >Kích hoạt</button>
+                  <button
+                  class="tw-ml-3"
+                    nz-button
+                    nzType="primary"
+                     nzSize="small"
+                  >Chỉnh sửa</button>
+                  
                 </td>
               </tr>
             </tbody>

@@ -88,7 +88,7 @@ import { NzImageModule } from 'ng-zorro-antd/image';
               <input
                 class=" tw-w-[70%]"
                 placeholder="Nhập địa chỉ"
-                [formControl]="bStore.form.controls.address"
+                [formControl]="bStore.form.controls.branchAddress"
                 nz-input
                 (input)="getAddress($event)"
                 [nzAutocomplete]="auto"
@@ -143,7 +143,7 @@ import { NzImageModule } from 'ng-zorro-antd/image';
                 nz-input
                 appOnlyNumber
                 placeholder="Nhập số điện thoại"
-                [formControl]="bStore.form.controls.phone"
+                [formControl]="bStore.form.controls.branchHotline"
               />
               <ng-template #phoneErrorTpl let-control>
                 <ng-container *ngIf="control.hasError('trimRequired')">
@@ -178,7 +178,6 @@ import { NzImageModule } from 'ng-zorro-antd/image';
                 nz-input
                 appOnlyNumber
                 class=" tw-w-[70%]"
-                [formControl]="bStore.form.controls.numberStaffs"
               />
               <ng-template #numberStaffErrorTpl let-control>
                 <ng-container *ngIf="control.hasError('trimRequired')">
@@ -203,7 +202,7 @@ import { NzImageModule } from 'ng-zorro-antd/image';
           </nz-form-item>
 
           <!-- dich vu -->
-          <nz-form-item nz-col nzSpan="12" class="">
+          <!-- <nz-form-item nz-col nzSpan="12" class="">
             <nz-form-label class="tw-ml-3" nzRequired>Dịch vụ</nz-form-label>
             <nz-form-control nzErrorTip="Vui lòng chọn loại dịch vụ">
               <nz-select
@@ -218,7 +217,7 @@ import { NzImageModule } from 'ng-zorro-antd/image';
                 ></nz-option>
               </nz-select>
             </nz-form-control>
-          </nz-form-item>
+          </nz-form-item> -->
 
           <!-- anh chi nhanh -->
           <nz-form-item nz-col nzSpan="24" class="">
@@ -304,19 +303,13 @@ export class BranchComponent {
 
   addBranch() {
     this.branchDisplayList = [];
-    this.bStore.form.controls.serviceArray.value.forEach((value) =>
-      this.bStore.form.controls.branchServiceList.value.push({
-        serviceId: value.toString().split('-')[0],
-        price: value.toString().split('-')[1],
-      })
-    );
     this.bStore.fileList.forEach((url) => {
       this.branchDisplayList.push({ url: 'branch/' + url.name });
     });
-    this.addModel = this.bStore.form.getRawValue();
+    // this.addModel = this.bStore.form.getRawValue();
     console.log(this.bStore.form.getRawValue());
 
-    this.bStore.addBranch({ model: this.addModel });
+    this.bStore.addBranch({ model: this.bStore.form.getRawValue() });
   }
 
   getAddress(event: Event) {
@@ -345,9 +338,8 @@ export class BranchComponent {
           url: result!.toString().split(';base64,')[1],
         });
         this.bStore.fileList = this.bStore.fileListTmp;
-        this.bStore.form.controls.branchDisplayList.value.push({
-          url: 'branch/' + item.file.name,
-          branchDisplayBase64Url: '',
+        this.bStore.form.controls.branchDisplays.value.push({
+          branchDisplayContent: 'branch/' + item.file.name,
         });
         this._cdr.markForCheck();
       },
@@ -360,6 +352,6 @@ export class BranchComponent {
   handleRemove(index: number) {
     this.bStore.fileListTmp.splice(index, 1);
     this.bStore.fileList = this.bStore.fileListTmp;
-    this.bStore.form.controls.branchDisplayList.value.splice(index, 1);
+    this.bStore.form.controls.branchDisplays.value.splice(index, 1);
   }
 }

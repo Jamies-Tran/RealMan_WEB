@@ -2,44 +2,26 @@ import { FormControl } from '@angular/forms';
 
 export namespace BranchApi {
   export interface Request {
-    thumbnailUrl: string;
-    shopOwnerId: string;
     branchName: string;
-    phone: string;
-    address: string;
-    status: string;
-    numberStaffs: number;
+    branchHotline: string;
+    branchThumbnail: string;
+    branchAddress: string;
     open: string | null;
     close: string | null;
-    branchDisplayList: branchDisplayList;
-    branchServiceList: branchServiceList;
+    branchDisplays: branchDisplays;
   }
 
-  export type branchDisplayList = {
-    url: string;
-    branchDisplayBase64Url: string;
-  }[];
-
-  export type branchServiceList = {
-    serviceId: string;
-    price: string;
-  }[];
-
-  export type displayUrlList = [];
+  export type branchDisplays = { branchDisplayContent: string }[];
   export type serviceIdList = [];
   export type RequestFormGroup = {
-    thumbnailUrl: FormControl<string>;
+    branchThumbnail: FormControl<string>;
     shopOwnerId: FormControl<string>;
     branchName: FormControl<string>;
-    phone: FormControl<string>;
-    address: FormControl<string>;
-    status: FormControl<string>;
-    numberStaffs: FormControl<number>;
+    branchHotline: FormControl<string>;
+    branchAddress: FormControl<string>;
     open: FormControl<string | null>;
     close: FormControl<string | null>;
-    branchDisplayList: FormControl<branchDisplayList>;
-    branchServiceList: FormControl<branchServiceList>;
-    serviceArray: FormControl<string[]>;
+    branchDisplays: FormControl<branchDisplays>;
   };
 }
 
@@ -53,17 +35,17 @@ export namespace BranchPagingApi {
   }
 
   export interface Response {
-    branchId: number;
-    shopOwnerId: number;
     branchName: string;
-    phone: string;
-    address: string;
-    status: string;
-    numberStaffs: 0;
+    branchThumbnail: string;
+    branchAddress: string | null;
+    branchStreet: string;
+    branchWard: string;
+    branchDistrict: string;
+    branchProvince: string;
     open: string;
     close: string;
-    displayUrlList: string[];
-    serviceIdList: string[];
+    branchStatusCode: string;
+    branchStatusName: string;
   }
 }
 
