@@ -106,17 +106,16 @@ export class SignInComponent implements OnInit {
         (data) => {
           this._router.navigate(["/homepage"])
           localStorage.setItem('phone', this.validateForm.controls.staffCode.getRawValue())
+          localStorage.setItem('token$', data['value']['accessToken'])
         },
-        (error) => {this._nzMessageService.error('Số điện thoại chưa được đăng kí.');}
+        (error) => {this._nzMessageService.error('Mã nhân viên chưa được đăng kí.');}
       );
   }
 
   ngOnInit(): void {
     this.validateForm = this._fb.group<SignInApi.RequestFormGroup>({
       staffCode: this._fb.control('', [
-        trimRequired,
-        Validators.maxLength(13),
-        Validators.minLength(10),
+        trimRequired
       ]),
       password: this._fb.control('', [trimRequired, Validators.minLength(3)])
     });

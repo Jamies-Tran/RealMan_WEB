@@ -60,7 +60,7 @@ import { trimRequired } from 'src/app/share/form-validator/trim-required.validat
             type="text"
             nz-input
             placeholder="Tìm theo tên"
-            [(ngModel)]="aStore.pagingRequest.searches"
+            [(ngModel)]="aStore.pagingRequest.search"
             (keyup.enter)="onSearch()"
           />
         </nz-input-group>
@@ -189,8 +189,8 @@ export class AccountListComponent {
   }
 
   onSearch() {
-    this.aStore.pagingRequest.searches =
-      this.aStore.pagingRequest.searches.replace(/[\t\n\r]/, '');
+    this.aStore.pagingRequest.search =
+      this.aStore.pagingRequest.search.replace(/[\t\n\r]/, '');
     if (this.aStore.pagingRequest.current !== 1) {
       this.aStore.pagingRequest.current = 1;
     } else {
@@ -223,9 +223,9 @@ export class AccountListComponent {
       Validators.minLength(10),
       Validators.maxLength(10),
     ]),
-    professional: this._fb.control(''),
+    role: this._fb.control(''),
     thumbnail: this._fb.control('123'),
-    professionalTypeCode: this._fb.control(''),
+    professionalTypeCode: this._fb.control({value: '', disabled: true}),
     professionalTypeName: this._fb.control(''),
     staffCode: this._fb.control(''),
     });

@@ -24,14 +24,14 @@ export class BranchApiService {
   private REST_API_SERVER = 'http://localhost:8080';
 
   public addBranch(model: BranchApi.Request) {
-    const url = `${this.REST_API_SERVER}/v1/branches`;
+    const url = `${this.REST_API_SERVER}/web/branch`;
     return this._http
       .post<any>(url, model, this.httpOptions)
       .pipe(catchError(this.handleError));
   }
 
   public paging(model: BranchPagingApi.Request) {
-    const url = `${this.REST_API_SERVER}/v1/branches?search=${model.search}&current=${model.current}&sorter=${model.sorter}&pageSize=${model.pageSize}`;
+    const url = `${this.REST_API_SERVER}/web/branch?search=${model.search}&current=${model.current}&sorter=${model.sorter}&pageSize=${model.pageSize}`;
     return this._http
       .get<Paging<BranchPagingApi.Response>>(url, this.httpOptions)
       .pipe(catchError(this.handleError));

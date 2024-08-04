@@ -21,7 +21,7 @@ export namespace AccountAddApi {
     phone: FormControl<string>;
     gender: FormControl<string>;
     dob: FormControl<string>;
-    professional: FormControl<string>;
+    role: FormControl<string>;
     thumbnail: FormControl<string>;
     professionalTypeCode: FormControl<string>;
     professionalTypeName: FormControl<string>;
@@ -31,7 +31,7 @@ export namespace AccountAddApi {
 
 export namespace AccountPagingApi {
   export interface Request {
-    searches: string;
+    search: string;
     role: string;
     current: number;
     pageSize: number;
@@ -107,7 +107,7 @@ export namespace AccountUpdateApi {
     phone: FormControl<string>;
     gender: FormControl<string>;
     dob: FormControl<string>;
-    professional: FormControl<string>;
+    role: FormControl<string>;
     thumbnail: FormControl<string>;
     professionalTypeCode: FormControl<string>;
     professionalTypeName: FormControl<string>;

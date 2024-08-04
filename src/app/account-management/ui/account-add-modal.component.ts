@@ -14,6 +14,7 @@ import { AccountAddApi, AccountUpdateApi } from '../data-access/model/account-ap
 import { differenceInCalendarDays } from 'date-fns';
 import { NzDatePickerModule } from 'ng-zorro-antd/date-picker';
 import { NzDividerModule } from 'ng-zorro-antd/divider';
+import { NzSelectChangeDirective } from 'src/app/share/ui/directive/nz-select-change.directive';
 
 @Component({
   selector: 'app-hangtag-add-or-update-modal',
@@ -32,7 +33,8 @@ import { NzDividerModule } from 'ng-zorro-antd/divider';
     RxLet,
     NzDatePickerModule,
     NzDividerModule,
-    NzModalModule
+    NzModalModule,
+    NzSelectChangeDirective
   ],
   template: `
     <div>
@@ -189,18 +191,30 @@ import { NzDividerModule } from 'ng-zorro-antd/divider';
             <nz-form-label class="tw-ml-3" nzRequired>Chức vụ</nz-form-label>
             <nz-form-control>
               <nz-select
+              (nzSelectChange)="onChangeLicense()"
                 class="tw-w-[70%]"
-                [formControl]="form.controls.professional"
+                [formControl]="form.controls.role"
               >
-                <nz-option nzValue="STYLIST" nzLabel="Stylist"></nz-option>
-                <nz-option nzValue="MASSEUR" nzLabel="Masseur"></nz-option>
+                <nz-option nzValue="OPERATOR_STAFF" nzLabel="Nhân viên vận hành"></nz-option>
                 <nz-option
-                  nzValue="RECEPTIONIST"
-                  nzLabel="Receptionist"
+                  nzValue="BRANCHMANAGER"
+                  nzLabel="Quản lý chi nhánh"
                 ></nz-option>
+              </nz-select>
+            </nz-form-control>
+          </nz-form-item>
+
+          <nz-form-item nz-col nzSpan="12" class="">
+            <nz-form-label class="tw-ml-3">Chức vụ nhân viên</nz-form-label>
+            <nz-form-control>
+              <nz-select
+                class="tw-w-[70%]"
+                [formControl]="form.controls.professionalTypeCode"
+              >
+                <nz-option nzValue="STYLIST" nzLabel="Thợ cắt tóc"></nz-option>
                 <nz-option
-                  nzValue="BRANCH_MANAGER"
-                  nzLabel="Branch Manager"
+                  nzValue="MASSEUR"
+                  nzLabel="Nhân viên massage"
                 ></nz-option>
               </nz-select>
             </nz-form-control>
@@ -217,6 +231,7 @@ import { NzDividerModule } from 'ng-zorro-antd/divider';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AccountAddModalComponent implements OnInit {
+
   @Input() form!: FormGroup<AccountAddApi.RequestFormGroup | AccountUpdateApi.RequestFormGroup>;
   @Output() clickSubmit = new EventEmitter<void>();
 
@@ -238,5 +253,16 @@ export class AccountAddModalComponent implements OnInit {
   disabledDate = (current: Date): boolean =>
     // Can not select days before today and today
     differenceInCalendarDays(current, this.today) > -6570;
+
+
+onChangeLicense() {
+    if(this.form.controls.role.value === "BRANCHMANAGER" || this.form.controls.role.value === ""){
+      this.form.controls.professionalTypeCode.disable()
+      this.form.controls.professionalTypeCode.setValue("")
+    }
+    else {
+      this.form.controls.professionalTypeCode.enable()
+    }
+  }
 
 }

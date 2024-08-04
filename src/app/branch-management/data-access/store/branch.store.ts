@@ -63,8 +63,6 @@ export class BranchStore
     this.#getService();
   }
 
-  addressData!: AutocompleteApi.Response;
-  options: string[] = [];
   fileList: NzUploadFile[] = [];
   fileListTmp: NzUploadFile[] = [];
   storage = getStorage();
@@ -125,13 +123,9 @@ export class BranchStore
         return this._cApiSvc.autocomplete(keyword).pipe(
           tap({
             next: (resp) => {
-              this.options = [];
-              if (resp.value.predictions !== null) {
-                resp.value.predictions.forEach((address) => {
-                  this.options.push(address.description);
-                });
-                this.patchState({ addressData: this.options });
-              }
+                this.patchState({ addressData: resp.values });
+                console.log(resp.values);
+
             },
             finalize: () => {},
           })

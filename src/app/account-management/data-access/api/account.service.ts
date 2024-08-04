@@ -29,7 +29,7 @@ export class AccountApiService {
   private REST_API_SERVER = 'http://localhost:8080';
 
   public createAccount(model: AccountAddApi.Request) {
-    const url = `${this.REST_API_SERVER}/v1/auth/accounts/manager?branchId=`;
+    const url = `${this.REST_API_SERVER}/web/accounts`;
     return this._http
       .post<any>(url, model, this.httpOptions)
       .pipe(catchError(this.handleError));
@@ -38,7 +38,7 @@ export class AccountApiService {
   public paging(model: AccountPagingApi.Request) {
     console.log(model.branchId);
 
-    const url = `${this.REST_API_SERVER}/v1/auth/accounts?branchId=${model.branchId}&searches=${model.searches}&role=${model.role}&current=${model.current}&pageSize=${model.pageSize}&sorter=${model.sorter}`;
+    const url = `${this.REST_API_SERVER}/web/accounts?search=${model.search}&branchId=${model.branchId}&role=${model.role}&current=${model.current}&pageSize=${model.pageSize}&sorter=${model.sorter}`;
     return this._http
       .get<Paging<AccountPagingApi.Response>>(url, this.httpOptions)
       .pipe(catchError(this.handleError));

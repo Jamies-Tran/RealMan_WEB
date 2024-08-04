@@ -150,9 +150,9 @@ export class BranchUpdateStore
           tap({
             next: (resp) => {
               this.options = [];
-              if (resp.value.predictions !== null) {
-                resp.value.predictions.forEach((address) => {
-                  this.options.push(address.description);
+              if (resp.values !== null) {
+                resp.values.forEach((address) => {
+                  this.options.push(address);
                 });
                 this.patchState({ addressData: this.options });
               }

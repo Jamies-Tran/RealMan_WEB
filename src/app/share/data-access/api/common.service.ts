@@ -25,7 +25,7 @@ export class CommonApiService {
   private REST_API_SERVER = 'http://localhost:8080';
 
   public autocomplete(address: string) {
-    const url = `${this.REST_API_SERVER}/v1/autocomplete?address=${address}&limit=10&radius=1000&moreCompound=true`;
+    const url = `${this.REST_API_SERVER}/collection/location?input=${address}`;
     return this._http
       .get<AutocompleteApi.Response>(url, this.httpOptions)
       .pipe(catchError(this.handleError));

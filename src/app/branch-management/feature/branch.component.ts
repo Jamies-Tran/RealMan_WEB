@@ -100,7 +100,6 @@ import { NzImageModule } from 'ng-zorro-antd/image';
               ></nz-autocomplete>
             </nz-form-control>
           </nz-form-item>
-
           <!-- thoi gian mo cua -->
           <nz-form-item nz-col nzSpan="12" class="">
             <nz-form-label class="tw-ml-3" nzRequired
@@ -323,6 +322,8 @@ export class BranchComponent {
   getAddress(event: Event) {
     const value = (event.target as HTMLInputElement).value;
     this.bStore.getAddress(value);
+    console.log(value);
+
   }
 
   handleUpload = (item: NzUploadXHRArgs) => {

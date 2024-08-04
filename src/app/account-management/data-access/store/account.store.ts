@@ -75,7 +75,7 @@ export class AccountStore extends ComponentStore<AccountState> {
   pagingRequest: AccountPagingApi.Request = {
     current: 1,
     pageSize: pagingSizeOptionsDefault[0],
-    searches: '',
+    search: '',
     sorter: '',
     orderDescending: false,
     role: RoleType.STAFF,
@@ -97,7 +97,7 @@ export class AccountStore extends ComponentStore<AccountState> {
       Validators.minLength(10),
       Validators.maxLength(10),
     ]),
-    professional: this._fb.control(''),
+    role: this._fb.control(''),
     thumbnail: this._fb.control('123'),
     professionalTypeCode: this._fb.control(''),
     professionalTypeName: this._fb.control(''),
@@ -206,9 +206,9 @@ export class AccountStore extends ComponentStore<AccountState> {
           tap({
             next: (resp) => {
               this.options = [];
-              if (resp.value.predictions !== null) {
-                resp.value.predictions.forEach((address) => {
-                  this.options.push(address.description);
+              if (resp.values !== null) {
+                resp.values.forEach((address) => {
+                  this.options.push(address);
                 });
                 this.patchState({ addressData: this.options });
               }
