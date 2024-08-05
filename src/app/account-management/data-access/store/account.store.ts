@@ -27,6 +27,7 @@ import { BranchNameApi } from 'src/app/share/data-access/model/branch-name.model
 import { BranchAddressApi } from 'src/app/share/data-access/model/branch-address-api.model';
 import { RoleType } from 'src/app/share/data-access/api/enum/role.enum';
 import { ActivatedRoute } from '@angular/router';
+import { NzModalRef } from 'ng-zorro-antd/modal';
 
 export interface AccountState {
   acountPaging: Paging<AccountPagingApi.Response>;
@@ -79,7 +80,7 @@ export class AccountStore extends ComponentStore<AccountState> {
     sorter: '',
     orderDescending: false,
     role: RoleType.STAFF,
-    branchId: localStorage.getItem('branchId$')!,
+    branchId: localStorage.getItem('branchId$')! === null ? '' : localStorage.getItem('branchId$')!,
   };
 
   accountStaffId : string[] = (this._activatedRoute.snapshot.paramMap.getAll('account'));
@@ -217,6 +218,26 @@ export class AccountStore extends ComponentStore<AccountState> {
           })
         );
       })
+    )
+  );
+
+  readonly addAccount = this.effect<{ model: AccountAddApi.Request, modalRef:  NzModalRef}>(($params) =>
+    $params.pipe(
+      tap(() => this.updateLoading(true)),
+      switchMap(({ model, modalRef }) =>
+        this._aApiSvc.createAccount(model).pipe(
+          tap({
+            next: (resp) => {
+              this._nzMessageService.success('Đăng ký tài khoản thành công');
+              modalRef.close()
+            },
+            error: () =>
+              this._nzMessageService.error('Đăng ký tài khoản thất bại.'),
+            finalize: () => this.updateLoading(false),
+          }),
+          catchError(() => EMPTY)
+        )
+      )
     )
   );
 

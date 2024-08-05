@@ -25,6 +25,7 @@ import { NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
 import { AccountAddModalComponent } from '../ui/account-add-modal.component';
 import { AccountAddApi } from '../data-access/model/account-api.model';
 import { trimRequired } from 'src/app/share/form-validator/trim-required.validator';
+import { tap } from 'rxjs';
 
 @Component({
   selector: 'app-account-list',
@@ -117,7 +118,6 @@ import { trimRequired } from 'src/app/share/form-validator/trim-required.validat
               <tr>
                 <th>STT</th>
                 <th>Họ và tên</th>
-                <th>Chi nhánh làm việc</th>
                 <th>Địa chỉ</th>
                 <th>Số điện thoại</th>
                 <th>Giới tính</th>
@@ -132,7 +132,6 @@ import { trimRequired } from 'src/app/share/form-validator/trim-required.validat
               <tr *ngFor="let data of vm.acountPaging.content; index as i">
                 <td>{{ i + 1 }}</td>
                 <td>{{ data.firstName + ' ' + data.lastName }}</td>
-                <td>{{ data.branch.branchName }}</td>
                 <td>{{ data.address }}</td>
                 <td>{{ data.phone }}</td>
                 <td>{{ data.gender }}</td>
@@ -150,14 +149,6 @@ import { trimRequired } from 'src/app/share/form-validator/trim-required.validat
                   <button
                     nz-button
                     nzType="primary"
-                    nzSize="small"
-                    [routerLink]="[
-                      '/account-management/detail-account',
-                      {
-                        account: [data.accountId],
-                        account1: [data.staff.staffId]
-                      }
-                    ]"
                     nzSize="small"
                   >
                     Chi Tiết
@@ -232,16 +223,16 @@ export class AccountListComponent {
 
 
     modalRef.componentInstance!.form = form;
-    // modalRef
-    //   .componentInstance!.clickSubmit.pipe(
-    //     tap(() => {
-    //       this._hStore.addHangtag({
-    //         model: PartnerHangtagAddApi.mapModelAdd(form),
-    //         modalRef,
-    //       });
-    //     })
-    //   )
-    //   .subscribe();
+    modalRef
+      .componentInstance!.clickSubmit.pipe(
+        tap(() => {
+          this.aStore.addAccount({
+            model: form.getRawValue(),
+            modalRef,
+          });
+        })
+      )
+      .subscribe();
   }
 
   readonly roleTypeNameMapping = roleTypeNameMapping;
