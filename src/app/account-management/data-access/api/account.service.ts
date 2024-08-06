@@ -44,6 +44,15 @@ export class AccountApiService {
       .pipe(catchError(this.handleError));
   }
 
+  public pagingAccountPending(model: AccountPagingApi.Request) {
+    console.log(model.branchId);
+
+    const url = `${this.REST_API_SERVER}/web/accounts?search=${model.search}&branchId=${model.branchId}&accountStatusCodes=PENDING_BRANCH&current=${model.current}&pageSize=${model.pageSize}&sorter=${model.sorter}`;
+    return this._http
+      .get<Paging<AccountPagingApi.Response>>(url, this.httpOptions)
+      .pipe(catchError(this.handleError));
+  }
+
   public getAccount(accountId: string, role: string) {
     const url = `${this.REST_API_SERVER}/v1/auth/account/${accountId}/${
       role === 'STAFF' ? 'staff' : 'manager'

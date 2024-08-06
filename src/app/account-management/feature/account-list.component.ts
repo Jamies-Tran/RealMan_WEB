@@ -134,7 +134,7 @@ import { tap } from 'rxjs';
                 <td>{{ data.firstName + ' ' + data.lastName }}</td>
                 <td>{{ data.address }}</td>
                 <td>{{ data.phone }}</td>
-                <td>{{ data.gender }}</td>
+                <td>{{ data.genderCode }}</td>
                 <!-- <ng-container *ngFor="let schedule of data.staff.scheduleList">
                   <td>
                     {{ schedule.workingDate ? schedule.workingDate : '' }}
@@ -143,8 +143,8 @@ import { tap } from 'rxjs';
                   <td>{{ schedule.shift ? schedule.shift : '' }}</td>
                 </ng-container> -->
 
-                <td>{{ data.status }}</td>
-                <td>{{ data.role | mapRoleTypeName }}</td>
+                <td>{{ data.accountStatusName }}</td>
+                <td>{{ data.roleName }}</td>
                 <td class="tw-text-center">
                   <button
                     nz-button

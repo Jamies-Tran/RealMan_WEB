@@ -52,7 +52,6 @@ export class ServiceStore
     super(initialState);
   }
   ngrxOnStoreInit() {
-    this.#getCategoryData();
   }
 
   id = Number(this._activatedRoute.snapshot.paramMap.get('serviceId'));
@@ -76,14 +75,12 @@ export class ServiceStore
   form = this._fb.group<
     ServiceAddApi.RequestFormGroup | ServiceUpdateApi.RequestFormGroup
   >({
-    name: this._fb.control('', trimRequired),
-    categoryId: this._fb.control(null, Validators.required),
-    description: this._fb.control(''),
-    serviceDisplayList: this._fb.control([]),
-    durationTime: this._fb.control('MINUTE'),
-    durationValue: this._fb.control(0, trimRequired),
-    price: this._fb.control(0, trimRequired),
-    fileList: this._fb.control([])
+    shopServiceName: this._fb.control('', trimRequired),
+    shopCategoryId: this._fb.control('', Validators.required),
+    serviceDisplays: this._fb.control([]),
+    shopServicePrice: this._fb.control(0, trimRequired),
+    fileList: this._fb.control([]),
+    shopServiceThumbnail: this._fb.control('123')
   });
 
   readonly getServicePaging = this.effect<never>(
@@ -128,22 +125,22 @@ export class ServiceStore
   //   )
   // );
 
-  readonly #getCategoryData = this.effect<never>(
-    pipe(
-      tap(() => this.updateLoading(true)),
-      switchMap(() =>
-        this._sApiSvc.CategoryDataGet().pipe(
-          tap({
-            next: (resp) => {
-              this.patchState({ categoryData: resp });
-            },
-            finalize: () => this.updateLoading(false),
-          }),
-          catchError(() => EMPTY)
-        )
-      )
-    )
-  );
+  // readonly #getCategoryData = this.effect<never>(
+  //   pipe(
+  //     tap(() => this.updateLoading(true)),
+  //     switchMap(() =>
+  //       this._sApiSvc.CategoryDataGet().pipe(
+  //         tap({
+  //           next: (resp) => {
+  //             this.patchState({ categoryData: resp });
+  //           },
+  //           finalize: () => this.updateLoading(false),
+  //         }),
+  //         catchError(() => EMPTY)
+  //       )
+  //     )
+  //   )
+  // );
 
   readonly addService = this.effect<{ model: ServiceAddApi.Request }>(
     ($params) =>
@@ -183,14 +180,14 @@ export class ServiceStore
         this._sApiSvc.getService(this.id).pipe(
           tap({
             next: (resp) => {
-              this.form.patchValue(resp.value)
-              if(resp.value.serviceDisplayList !== null){
-                resp.value.serviceDisplayList.forEach((file) => {
-                  getDownloadURL(ref(this.storage, file.serviceDisplayUrl))
+              this.form.patchValue(resp.content)
+              if(resp.content.serviceDisplays !== null){
+                resp.content.serviceDisplays.forEach((file) => {
+                  getDownloadURL(ref(this.storage, file.serviceDisplayContent))
                     .then((url) => {
                       this.fileListTmp.push({
-                        uid: file.serviceDisplayUrl.split('service/', 2)[1],
-                        name: file.serviceDisplayUrl.split('service/', 2)[1],
+                        uid: file.serviceDisplayContent.split('service/', 2)[1],
+                        name: file.serviceDisplayContent.split('service/', 2)[1],
                         status: 'done',
                         thumbUrl: url,
                         url: url,
@@ -200,7 +197,7 @@ export class ServiceStore
                     .catch((error) => {});
                 });
               } else {
-                this.form.controls.serviceDisplayList.setValue([])
+                this.form.controls.serviceDisplays.setValue([])
                 this.form.controls.fileList.setValue([])
               }
             },

@@ -1,9 +1,11 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import {
-  FormsModule,
-  ReactiveFormsModule,
-} from '@angular/forms';
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  OnInit,
+} from '@angular/core';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { NzBreadCrumbModule } from 'ng-zorro-antd/breadcrumb';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzDividerModule } from 'ng-zorro-antd/divider';
@@ -40,7 +42,7 @@ import { NzImageModule } from 'ng-zorro-antd/image';
     NzUploadModule,
     RxLet,
     OnlyNumberInputDirective,
-    NzImageModule
+    NzImageModule,
   ],
   providers: [NzMessageService, provideComponentStore(ServiceStore)],
   template: `
@@ -61,7 +63,7 @@ import { NzImageModule } from 'ng-zorro-antd/image';
               <input
                 class="tw-w-[70%]"
                 nz-input
-                [formControl]="form.controls.name"
+                [formControl]="form.controls.shopServiceName"
                 placeholder="Nhập tên dịch vụ"
               />
             </nz-form-control>
@@ -70,14 +72,12 @@ import { NzImageModule } from 'ng-zorro-antd/image';
           <!-- Tien -->
 
           <nz-form-item nz-col nzSpan="12" class="">
-            <nz-form-label class="tw-ml-3" nzRequired
-              >Số Tiền</nz-form-label
-            >
+            <nz-form-label class="tw-ml-3" nzRequired>Số Tiền</nz-form-label>
             <nz-form-control nzErrorTip="Vui lòng nhập số tiền">
               <input
                 class="tw-w-[70%]"
                 nz-input
-                [formControl]="form.controls.price"
+                [formControl]="form.controls.shopServicePrice"
                 placeholder="Nhập số tiền"
                 appOnlyNumber
               />
@@ -85,6 +85,7 @@ import { NzImageModule } from 'ng-zorro-antd/image';
           </nz-form-item>
 
           <!-- loaij dichj vuj -->
+
           <nz-form-item nz-col nzSpan="12" class="">
             <nz-form-label class="tw-ml-3" nzRequired
               >Loại dịch vụ</nz-form-label
@@ -92,12 +93,15 @@ import { NzImageModule } from 'ng-zorro-antd/image';
             <nz-form-control nzErrorTip="Vui lòng chọn loại dịch vụ">
               <nz-select
                 class="tw-w-[70%]"
-                [formControl]="form.controls.categoryId"
+                [formControl]="form.controls.shopCategoryId"
               >
                 <nz-option
-                  *ngFor="let option of vm.categoryData.values"
-                  [nzLabel]="option.categoryType"
-                  [nzValue]="option.categoryId"
+                  nzLabel="Dịch vụ của thợ cắt tóc"
+                  nzValue="STYLIST"
+                ></nz-option>
+                <nz-option
+                  nzLabel="Dịch vụ của thợ massage"
+                  nzValue="MASSEUR"
                 ></nz-option>
               </nz-select>
             </nz-form-control>
@@ -105,7 +109,7 @@ import { NzImageModule } from 'ng-zorro-antd/image';
 
           <!-- thoi gian -->
 
-          <nz-form-item nz-col nzSpan="12" class="">
+          <!-- <nz-form-item nz-col nzSpan="12" class="">
             <nz-form-label class="tw-ml-3" nzRequired
               >Thời gian dự tính</nz-form-label
             >
@@ -127,21 +131,21 @@ import { NzImageModule } from 'ng-zorro-antd/image';
                 />
               </nz-input-group>
             </nz-form-control>
-          </nz-form-item>
+          </nz-form-item> -->
 
           <!-- mo ta -->
 
-          <nz-form-item nz-col nzSpan="12">
+          <!-- <nz-form-item nz-col nzSpan="12">
             <nz-form-label class="tw-ml-3">Mô tả dịch vụ</nz-form-label>
             <nz-form-control>
               <textarea
                 class="tw-w-[70%]"
-                rows="5"
+                rows="1"
                 nz-input
                 [formControl]="form.controls.description"
               ></textarea>
             </nz-form-control>
-          </nz-form-item>
+          </nz-form-item> -->
 
           <!-- anh -->
 
@@ -150,7 +154,7 @@ import { NzImageModule } from 'ng-zorro-antd/image';
               >Ảnh dịch vụ</nz-form-label
             >
             <nz-form-control nzErrorTip="Vui lòng nhập tên" class="tw-w-[70%]">
-            <nz-upload
+              <nz-upload
                 nzType="drag"
                 [nzMultiple]="true"
                 [nzCustomRequest]="handleUpload"
@@ -168,22 +172,30 @@ import { NzImageModule } from 'ng-zorro-antd/image';
                   uploading company data or other band files
                 </p>
               </nz-upload>
-              <div *ngFor="let file of form.controls.fileList.getRawValue(), index as index" class="tw-relative tw-text-center tw-mt-3">
-              <img
-                nz-image
-                nzSrc="{{ file.thumbUrl }}"
-                width="30%"
-                height="30%"
-                alt="preview-image"
-                class="tw-object-contain tw-cursor-pointer" />
-              <i
-                nz-icon
-                nzType="close-circle"
-                nzTheme="twotone"
-                nzTwotoneColor="#e10027"
-                (click)="handleRemove(index)"
-                class="tw-absolute tw-right-0 tw-top-0 tw-cursor-pointer icon-remove"></i>
-            </div>
+              <div
+                *ngFor="
+                  let file of form.controls.fileList.getRawValue();
+                  index as index
+                "
+                class="tw-relative tw-text-center tw-mt-3"
+              >
+                <img
+                  nz-image
+                  nzSrc="{{ file.thumbUrl }}"
+                  width="30%"
+                  height="30%"
+                  alt="preview-image"
+                  class="tw-object-contain tw-cursor-pointer"
+                />
+                <i
+                  nz-icon
+                  nzType="close-circle"
+                  nzTheme="twotone"
+                  nzTwotoneColor="#e10027"
+                  (click)="handleRemove(index)"
+                  class="tw-absolute tw-right-0 tw-top-0 tw-cursor-pointer icon-remove"
+                ></i>
+              </div>
             </nz-form-control>
           </nz-form-item>
         </div>
@@ -234,12 +246,11 @@ export class ServiceComponent {
           name: item.file.name ?? '',
           status: 'done',
           thumbUrl: result!.toString(),
-          url: result!.toString().split(';base64,')[1]
+          url: result!.toString().split(';base64,')[1],
         });
-        this.form.controls.fileList.patchValue(this.sStore.fileListTmp)
-        this.form.controls.serviceDisplayList.value.push({
-          serviceDisplayUrl: 'service/' + item.file.name,
-          branchDisplayBase64Url: '',
+        this.form.controls.fileList.patchValue(this.sStore.fileListTmp);
+        this.form.controls.serviceDisplays.value.push({
+          serviceDisplayContent: 'service/' + item.file.name,
         });
         this._cdr.markForCheck();
       },
@@ -250,8 +261,8 @@ export class ServiceComponent {
   };
 
   handleRemove(index: number) {
-    this.sStore.fileListTmp.splice(index,1)
-    this.form.controls.fileList.patchValue(this.sStore.fileListTmp)
-    this.form.controls.serviceDisplayList.value.splice(index,1)
+    this.sStore.fileListTmp.splice(index, 1);
+    this.form.controls.fileList.patchValue(this.sStore.fileListTmp);
+    this.form.controls.serviceDisplays.value.splice(index, 1);
   }
 }

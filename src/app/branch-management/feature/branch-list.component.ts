@@ -1,8 +1,5 @@
 import { CommonModule } from '@angular/common';
-import {
-  ChangeDetectionStrategy,
-  Component,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { NzBreadCrumbModule } from 'ng-zorro-antd/breadcrumb';
 import { NzButtonModule } from 'ng-zorro-antd/button';
@@ -13,11 +10,15 @@ import { NzInputModule } from 'ng-zorro-antd/input';
 import { NzSelectModule } from 'ng-zorro-antd/select';
 import { NzTableModule, NzTableQueryParams } from 'ng-zorro-antd/table';
 import { NzTableDefaultSettingDirective } from 'src/app/share/ui/directive/nz-table-default-setting.directive';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, NonNullableFormBuilder } from '@angular/forms';
 import { BranchStore } from '../data-access/store/branch.store';
 import { provideComponentStore } from '@ngrx/component-store';
 import { RxLet } from '@rx-angular/template/let';
 import { NzMessageService } from 'ng-zorro-antd/message';
+import { NzModalService } from 'ng-zorro-antd/modal';
+import { BranchActiveApi } from '../data-access/model/branch-api.model';
+import { tap } from 'rxjs';
+import { BranchActiveModalComponent } from '../ui/branch-active-modal.component';
 
 @Component({
   selector: 'app-branch-list',
@@ -37,7 +38,7 @@ import { NzMessageService } from 'ng-zorro-antd/message';
     NzTableDefaultSettingDirective,
     RxLet,
   ],
-  providers: [provideComponentStore(BranchStore), NzMessageService],
+  providers: [provideComponentStore(BranchStore), NzMessageService, NzModalService],
   template: `
     <nz-breadcrumb>
       <nz-breadcrumb-item>Quản lý chi nhánh</nz-breadcrumb-item>
@@ -63,7 +64,8 @@ import { NzMessageService } from 'ng-zorro-antd/message';
       </div>
       <div nz-col nzSpan="2" class="tw-text-center">
         <button
-          nz-button nzType="primary"
+          nz-button
+          nzType="primary"
           [routerLink]="['/branch-management', 'create-branch']"
         >
           Tạo chi nhánh
@@ -110,24 +112,38 @@ import { NzMessageService } from 'ng-zorro-antd/message';
               <tr *ngFor="let data of vm.branchPaging.content; index as i">
                 <td>{{ i + 1 }}</td>
                 <td>{{ data.branchName }}</td>
-                <td>{{ data.branchStreet + ', ' + data.branchWard + ', ' + data.branchDistrict + ', ' + data.branchProvince }}</td>
+                <td>
+                  {{
+                    data.branchStreet +
+                      ', ' +
+                      data.branchWard +
+                      ', ' +
+                      data.branchDistrict +
+                      ', ' +
+                      data.branchProvince
+                  }}
+                </td>
                 <td></td>
                 <td>{{ data.branchStatusName }}</td>
                 <td class="tw-text-center">
-                <button
+                  <button
                     *ngIf="data.branchStatusCode === 'INACTIVE'"
                     nz-button
                     nzType="primary"
-                    nzDanger=""
-                     nzSize="small"
-                  >Kích hoạt</button>
+                    nzDanger
+                    nzSize="small"
+                    (click)="onActiveBranch(data.branchId)"
+                  >
+                    Kích hoạt
+                  </button>
                   <button
-                  class="tw-ml-3"
+                    class="tw-ml-3"
                     nz-button
                     nzType="primary"
-                     nzSize="small"
-                  >Chỉnh sửa</button>
-                  
+                    nzSize="small"
+                  >
+                    Chỉnh sửa
+                  </button>
                 </td>
               </tr>
             </tbody>
@@ -140,7 +156,11 @@ import { NzMessageService } from 'ng-zorro-antd/message';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class BranchListComponent {
-  constructor(public bStore: BranchStore) {}
+  constructor(
+    public bStore: BranchStore,
+    private _nzModalSvc: NzModalService,
+    private _fb: NonNullableFormBuilder
+  ) {}
   vm$ = this.bStore.state$;
 
   onTableQueryParamsChange(params: NzTableQueryParams) {
@@ -162,5 +182,33 @@ export class BranchListComponent {
     } else {
       this.bStore.getBranchPaging();
     }
+  }
+
+  onActiveBranch(branchId: number) {
+    const modalRef = this._nzModalSvc.create({
+      nzTitle: 'Kích hoạt chi nhánh',
+      nzWidth: '720px',
+      nzContent: BranchActiveModalComponent,
+    });
+
+    const form = this._fb.group<BranchActiveApi.RequestFormGroup>({
+      staffIdList: this._fb.control([]),
+      serviceList: this._fb.control([]),
+    });
+
+    this.bStore.getAccountPaging();
+
+    modalRef.componentInstance!.form = form;
+    modalRef
+      .componentInstance!.clickSubmit.pipe(
+        tap(() => {
+          this.bStore.activeBranch({
+            id: branchId,
+            model: form.getRawValue(),
+            modalRef,
+          });
+        })
+      )
+      .subscribe();
   }
 }

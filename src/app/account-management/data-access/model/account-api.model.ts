@@ -42,48 +42,22 @@ export namespace AccountPagingApi {
 
   export interface Response {
     accountId: number;
-    branchId: number;
-    thumbnailUrl: string;
+    accountStatusCode: string;
+    accountStatusName: string;
+    address: string;
+    branchId: string;
+    dob: string;
     firstName: string;
+    genderCode: string;
+    genderName: string;
     lastName: string;
     phone: string;
-    address: string;
-    dob: string;
-    gender: string;
-    status: string;
-    itimacyLevel: string;
-    professional: string;
-    average: number;
-    branch: {
-      branchName: string;
-    };
-    staff: {
-      staffId: number;
-      averageRating: number;
-      scheduleList: [
-        {
-          scheduleId: number;
-          staffId: number;
-          shift: string;
-          workingDate: string;
-          start: {
-            hour: number;
-            minute: number;
-            second: number;
-            nano: number;
-          };
-          end: {
-            hour: number;
-            minute: number;
-            second: number;
-            nano: number;
-          };
-          scheduleStatus: string;
-        }
-      ];
-      professional: string;
-    };
-    role: RoleType;
+    professionalTypeCode: string;
+    professionalTypeName: string;
+    roleCode: string;
+    roleName: string;
+    staffCode: string;
+    thumbnail: string;
   }
 }
 

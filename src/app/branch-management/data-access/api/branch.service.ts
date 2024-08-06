@@ -5,7 +5,7 @@ import {
   HttpHeaders,
 } from '@angular/common/http';
 import { catchError, throwError } from 'rxjs';
-import { BranchApi, BranchPagingApi, BranchUpdateApi } from '../model/branch-api.model';
+import { BranchActiveApi, BranchApi, BranchPagingApi, BranchUpdateApi } from '../model/branch-api.model';
 import { Paging } from 'src/app/share/data-access/model/paging.type';
 import { ServiceDataApi } from 'src/app/service-management/data-access/model/service-api.model';
 
@@ -46,6 +46,13 @@ export class BranchApiService {
 
   public updateBranch(id: number, model: BranchUpdateApi.Request) {
     const url = `${this.REST_API_SERVER}/v1/branch/${id}`;
+    return this._http
+      .put<any>(url, model, this.httpOptions)
+      .pipe(catchError(this.handleError));
+  }
+
+  public activeBranch(branchId: number, model: BranchActiveApi.Request) {
+    const url = `${this.REST_API_SERVER}/web/branch/${branchId}/active`;
     return this._http
       .put<any>(url, model, this.httpOptions)
       .pipe(catchError(this.handleError));

@@ -90,13 +90,12 @@ import { NzDropDownModule } from 'ng-zorro-antd/dropdown';
 
 <!-- quản lí dịch vụ -->
 
-          <li nz-submenu nzTitle="Quản lý dịch vụ" nzIcon="team" *ngIf="role == 'SHOP_OWNER' || role == 'BRANCH_MANAGER'">
+          <li nz-submenu nzTitle="Quản lý dịch vụ" nzIcon="team">
             <ul>
               <li
                 nz-menu-item
                 nzMatchRouter
                 [routerLink]="['/service-management', 'service-list']"
-                *ngIf="role == 'SHOP_OWNER' || role == 'BRANCH_MANAGER'"
               >
                 Danh sách dịch vụ
               </li>
@@ -104,7 +103,6 @@ import { NzDropDownModule } from 'ng-zorro-antd/dropdown';
                 nz-menu-item
                 [routerLink]="['/service-management', 'create-service']"
                 nzMatchRouter
-                *ngIf="role == 'SHOP_OWNER'"
               >
                 Tạo dịch vụ
               </li>

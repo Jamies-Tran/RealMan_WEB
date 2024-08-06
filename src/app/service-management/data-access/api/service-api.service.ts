@@ -38,14 +38,14 @@ export class ServiceApiService {
   }
 
   public addService(model: ServiceAddApi.Request) {
-    const url = `${this.REST_API_SERVER}/v1/services`;
+    const url = `${this.REST_API_SERVER}/web/shop-service`;
     return this._http
       .post<any>(url, model, this.httpOptions)
       .pipe(catchError(this.handleError));
   }
 
   public paging(model: ServicePagingApi.Request) {
-    const url = `${this.REST_API_SERVER}/v1/services?branchId=${localStorage.getItem('branchId$')}&current=${model.current}&sorter=${model.sorter}&pageSize=${model.pageSize}`;
+    const url = `${this.REST_API_SERVER}/web/shop-service?branchId=${localStorage.getItem('branchId$')! === null ? '' : localStorage.getItem('branchId$')!}&current=${model.current}&sorter=${model.sorter}&pageSize=${model.pageSize}`;
     return this._http
       .get<Paging<ServicePagingApi.Response>>(url, this.httpOptions)
       .pipe(catchError(this.handleError));
@@ -59,7 +59,7 @@ export class ServiceApiService {
   }
 
   public updateService(id: number, model: ServiceUpdateApi.Request) {
-    const url = `${this.REST_API_SERVER}/v1/service/${id}`;
+    const url = `${this.REST_API_SERVER}/web/shop-service/${id}`;
     return this._http
       .put<any>(url, model, this.httpOptions)
       .pipe(catchError(this.handleError));

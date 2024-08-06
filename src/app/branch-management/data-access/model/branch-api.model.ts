@@ -35,6 +35,7 @@ export namespace BranchPagingApi {
   }
 
   export interface Response {
+    branchId: number;
     branchName: string;
     branchThumbnail: string;
     branchAddress: string | null;
@@ -105,4 +106,21 @@ export namespace BranchUpdateApi {
       branchServiceList: branchServiceList;
     };
   }
+}
+
+export namespace BranchActiveApi {
+  export interface Request {
+    staffIdList: string[];
+    serviceList: serviceList
+  }
+
+  export type serviceList = {
+    shopServiceId: number;
+    price: number;
+  }[];
+
+  export type RequestFormGroup = {
+    staffIdList: FormControl<string[]>;
+    serviceList: FormControl<serviceList>
+  };
 }

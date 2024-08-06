@@ -229,6 +229,7 @@ export class AccountStore extends ComponentStore<AccountState> {
           tap({
             next: (resp) => {
               this._nzMessageService.success('Đăng ký tài khoản thành công');
+              this.getAccountPaging()
               modalRef.close()
             },
             error: () =>

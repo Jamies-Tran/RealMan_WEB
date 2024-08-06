@@ -1,6 +1,10 @@
 import { Injectable } from '@angular/core';
 import { ComponentStore, OnStoreInit } from '@ngrx/component-store';
-import { BranchApi, BranchPagingApi } from '../model/branch-api.model';
+import {
+  BranchActiveApi,
+  BranchApi,
+  BranchPagingApi,
+} from '../model/branch-api.model';
 import { Paging } from 'src/app/share/data-access/model/paging.type';
 import { BranchApiService } from '../api/branch.service';
 import { pagingSizeOptionsDefault } from 'src/app/share/data-access/const/paging-size-options-default.const';
@@ -19,15 +23,16 @@ import { NonNullableFormBuilder, Validators } from '@angular/forms';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { trimRequired } from 'src/app/share/form-validator/trim-required.validator';
 import { ServiceDataApi } from 'src/app/service-management/data-access/model/service-api.model';
-import {
-  getStorage,
-  ref,
-  uploadString,
-} from 'firebase/storage';
+import { getStorage, ref, uploadString } from 'firebase/storage';
 import { NzUploadFile } from 'ng-zorro-antd/upload';
+import { AccountPagingApi } from 'src/app/account-management/data-access/model/account-api.model';
+import { AccountApiService } from 'src/app/account-management/data-access/api/account.service';
+import { RoleType } from 'src/app/share/data-access/api/enum/role.enum';
+import { NzModalRef } from 'ng-zorro-antd/modal';
 
 export interface BranchState {
   branchPaging: Paging<BranchPagingApi.Response>;
+  acountPaging: Paging<AccountPagingApi.Response>;
   loadingCount: number;
   addressData: string[];
   serviceData: ServiceDataApi.Response;
@@ -44,6 +49,13 @@ const initialState: BranchState = {
   loadingCount: 0,
   addressData: [],
   serviceData: { values: [] },
+  acountPaging: {
+    content: [],
+    current: 1,
+    pageSize: 10,
+    totalElements: 0,
+    totalPages: 0,
+  },
 };
 
 @Injectable()
@@ -55,7 +67,8 @@ export class BranchStore
     private _bApiSvc: BranchApiService,
     private _cApiSvc: CommonApiService,
     private _fb: NonNullableFormBuilder,
-    private _nzMessageService: NzMessageService
+    private _nzMessageService: NzMessageService,
+    private _aApiSvc: AccountApiService
   ) {
     super(initialState);
   }
@@ -77,6 +90,19 @@ export class BranchStore
     search: '',
     sorter: '',
     orderDescending: false,
+  };
+
+  pagingAccountRequest: AccountPagingApi.Request = {
+    current: 1,
+    pageSize: pagingSizeOptionsDefault[0],
+    search: '',
+    sorter: '',
+    orderDescending: false,
+    role: RoleType.STAFF,
+    branchId:
+      localStorage.getItem('branchId$')! === null
+        ? ''
+        : localStorage.getItem('branchId$')!,
   };
 
   form = this._fb.group<BranchApi.RequestFormGroup>({
@@ -111,6 +137,23 @@ export class BranchStore
     )
   );
 
+  readonly getAccountPaging = this.effect<never>(
+    pipe(
+      tap(() => this.updateLoading(true)),
+      switchMap(() =>
+        this._aApiSvc.pagingAccountPending(this.pagingAccountRequest).pipe(
+          tap({
+            next: (resp) => {
+              if (resp.content) this.patchState({ acountPaging: resp });
+            },
+            finalize: () => this.updateLoading(false),
+          }),
+          catchError(() => EMPTY)
+        )
+      )
+    )
+  );
+
   readonly getAddress = this.effect<string>(($params) =>
     $params.pipe(
       debounceTime(500),
@@ -119,14 +162,34 @@ export class BranchStore
         return this._cApiSvc.autocomplete(keyword).pipe(
           tap({
             next: (resp) => {
-                this.patchState({ addressData: resp.values });
-                console.log(resp.values);
-
+              this.patchState({ addressData: resp.values });
+              console.log(resp.values);
             },
             finalize: () => {},
           })
         );
       })
+    )
+  );
+
+  readonly activeBranch = this.effect<{id: number; model: BranchActiveApi.Request; modalRef: NzModalRef}>(($params) =>
+    $params.pipe(
+      tap(() => this.updateLoading(true)),
+      switchMap(({ id, model, modalRef }) =>
+        this._bApiSvc.activeBranch(id, model).pipe(
+          tap({
+            next: (resp) => {
+              this._nzMessageService.success('Kích hoạt chi nhánh thành công');
+              modalRef.close()
+              this.getBranchPaging()
+            },
+            error: () =>
+              this._nzMessageService.error('Kích hoạt chi nhánh thất bại.'),
+            finalize: () => this.updateLoading(false),
+          }),
+          catchError(() => EMPTY)
+        )
+      )
     )
   );
 
@@ -149,7 +212,7 @@ export class BranchStore
                 });
               });
               this.form.reset();
-              this.fileList = []
+              this.fileList = [];
               this._nzMessageService.success('Đăng ký chi nhánh thành công');
             },
             error: () =>

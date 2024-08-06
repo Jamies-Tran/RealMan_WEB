@@ -59,7 +59,7 @@ import { Observable } from 'rxjs';
               <input
                 class="tw-rounded-md tw-w-[70%]"
                 nz-input
-                [formControl]="form.controls.name"
+                [formControl]="form.controls.shopServiceName"
                 placeholder="Nhập tên dịch vụ"
               />
             </nz-form-control>
@@ -73,7 +73,7 @@ import { Observable } from 'rxjs';
               <input
                 class="tw-w-[70%]"
                 nz-input
-                [formControl]="form.controls.price"
+                [formControl]="form.controls.shopServicePrice"
                 placeholder="Nhập số tiền"
                 appOnlyNumber
               />
@@ -88,7 +88,7 @@ import { Observable } from 'rxjs';
             <nz-form-control nzErrorTip="Vui lòng chọn loại dịch vụ">
               <nz-select
                 class="tw-w-[70%]"
-                [formControl]="form.controls.categoryId"
+                [formControl]="form.controls.shopCategoryId"
               >
                 <nz-option
                   *ngFor="let option of vm.categoryData.values"
@@ -101,7 +101,7 @@ import { Observable } from 'rxjs';
 
           <!-- thoi gian -->
 
-          <nz-form-item nz-col nzSpan="12" class="">
+          <!-- <nz-form-item nz-col nzSpan="12" class="">
             <nz-form-label class="tw-ml-3" nzRequired
               >Thời gian dự tính</nz-form-label
             >
@@ -126,11 +126,11 @@ import { Observable } from 'rxjs';
                 />
               </nz-input-group>
             </nz-form-control>
-          </nz-form-item>
+          </nz-form-item> -->
 
           <!-- mo ta -->
 
-          <nz-form-item nz-col nzSpan="12">
+          <!-- <nz-form-item nz-col nzSpan="12">
             <nz-form-label class="tw-ml-3">Mô tả dịch vụ</nz-form-label>
             <nz-form-control>
               <textarea
@@ -140,7 +140,7 @@ import { Observable } from 'rxjs';
                 [formControl]="form.controls.description"
               ></textarea>
             </nz-form-control>
-          </nz-form-item>
+          </nz-form-item> -->
 
           <!-- anh -->
 
@@ -244,9 +244,8 @@ export class ServiceUpdateComponent implements OnInit {
           url: result!.toString().split(';base64,')[1]
         });
         this.form.controls.fileList.patchValue(this.sStore.fileListTmp)
-        this.form.controls.serviceDisplayList.value.push({
-          serviceDisplayUrl: 'service/' + item.file.name,
-          branchDisplayBase64Url: '',
+        this.form.controls.serviceDisplays.value.push({
+          serviceDisplayContent: 'service/' + item.file.name,
         });
         this._cdr.markForCheck();
       },
@@ -259,6 +258,6 @@ export class ServiceUpdateComponent implements OnInit {
   handleRemove(index: number) {
     this.sStore.fileListTmp.splice(index,1)
     this.form.controls.fileList.patchValue(this.sStore.fileListTmp)
-    this.form.controls.serviceDisplayList.value.splice(index,1)
+    this.form.controls.serviceDisplays.value.splice(index,1)
   }
 }
