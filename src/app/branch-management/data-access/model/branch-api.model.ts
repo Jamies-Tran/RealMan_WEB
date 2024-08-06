@@ -115,12 +115,13 @@ export namespace BranchActiveApi {
   }
 
   export type serviceList = {
-    shopServiceId: number;
-    price: number;
+    shopServiceId: string;
+    price: string;
   }[];
 
   export type RequestFormGroup = {
     staffIdList: FormControl<string[]>;
     serviceList: FormControl<serviceList>
+    service: FormControl<string[]>
   };
 }

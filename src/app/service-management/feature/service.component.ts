@@ -97,11 +97,11 @@ import { NzImageModule } from 'ng-zorro-antd/image';
               >
                 <nz-option
                   nzLabel="Dịch vụ của thợ cắt tóc"
-                  nzValue="STYLIST"
+                  nzValue="1"
                 ></nz-option>
                 <nz-option
                   nzLabel="Dịch vụ của thợ massage"
-                  nzValue="MASSEUR"
+                  nzValue="2"
                 ></nz-option>
               </nz-select>
             </nz-form-control>

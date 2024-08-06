@@ -194,11 +194,15 @@ export class BranchListComponent {
     const form = this._fb.group<BranchActiveApi.RequestFormGroup>({
       staffIdList: this._fb.control([]),
       serviceList: this._fb.control([]),
+      service: this._fb.control([])
     });
 
     this.bStore.getAccountPaging();
+    this.bStore.getServicePaging()
 
     modalRef.componentInstance!.form = form;
+
+
     modalRef
       .componentInstance!.clickSubmit.pipe(
         tap(() => {
@@ -207,6 +211,7 @@ export class BranchListComponent {
             model: form.getRawValue(),
             modalRef,
           });
+          console.log(form.getRawValue());
         })
       )
       .subscribe();

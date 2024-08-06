@@ -94,22 +94,20 @@ import { NzSelectChangeDirective } from 'src/app/share/ui/directive/nz-select-ch
               <tr>
                 <th>STT</th>
                 <th>Tên dịch vụ</th>
-                <th>Chi nhánh sử dụng</th>
-                <th>Mô tả</th>
+                <th>Giá</th>
                 <th></th>
               </tr>
             </thead>
             <tbody>
               <tr *ngFor="let data of vm.servicePaging.content; index as i">
                 <td>{{ i + 1 }}</td>
-                <td>{{ data.name }}</td>
-                <td>{{ data.branchName }}</td>
-                <td>{{ data.description }}</td>
+                <td>{{ data.shopServiceName }}</td>
+                <td>{{ data.shopServicePrice }}</td>
                 <td class="tw-text-center">
                   <button
                     nz-button
                     nzType="primary"
-                    [routerLink]="['/service-management', data.serviceId]"
+                    [routerLink]="['/service-management', data.shopServiceId]"
                     nzSize="small"
                   >
                     Edit

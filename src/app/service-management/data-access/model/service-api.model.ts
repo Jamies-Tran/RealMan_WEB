@@ -38,7 +38,7 @@ export namespace ServiceAddApi {
     shopCategoryId: string;
     serviceDisplays: serviceDisplays;
     shopServicePrice: number;
-    shopServiceThumbnail: string
+    shopServiceThumbnail: string;
   }
 
   export type serviceDisplays = {
@@ -61,7 +61,7 @@ export namespace ServiceAddApi {
       shopServiceName: formValue.shopServiceName,
       serviceDisplays: formValue.serviceDisplays,
       shopServicePrice: formValue.shopServicePrice,
-      shopServiceThumbnail: formValue.shopServiceThumbnail
+      shopServiceThumbnail: formValue.shopServiceThumbnail,
     };
   }
 }
@@ -76,12 +76,20 @@ export namespace ServicePagingApi {
   }
 
   export interface Response {
-    description: string;
-    name: string;
-    branchServiceList: branchServiceList;
-    serviceId: number;
-    branchName: string;
+    shopServiceId: string;
+    branchId: string;
+    shopServiceName: string;
+    shopServicePrice: string;
+    shopServiceThumbnail: string;
+    shopCategoryId: string;
+    shopCategoryCode: string;
+    shopCategoryName: string;
+    serviceDisplays: serviceDisplays;
   }
+
+  export type serviceDisplays = {
+    serviceDisplayContent: string;
+  }[];
 
   export type branchServiceList = {
     serviceId: number;
@@ -111,7 +119,7 @@ export namespace ServiceUpdateApi {
     shopCategoryId: string;
     serviceDisplays: serviceDisplays;
     shopServicePrice: number;
-    shopServiceThumbnail: string
+    shopServiceThumbnail: string;
   }
 
   export type serviceDisplays = {
@@ -134,7 +142,7 @@ export namespace ServiceUpdateApi {
       shopServiceName: formValue.shopServiceName,
       serviceDisplays: formValue.serviceDisplays,
       shopServicePrice: formValue.shopServicePrice,
-      shopServiceThumbnail: formValue.shopServiceThumbnail
+      shopServiceThumbnail: formValue.shopServiceThumbnail,
     };
   }
 }

@@ -22,17 +22,19 @@ import { CommonApiService } from 'src/app/share/data-access/api/common.service';
 import { NonNullableFormBuilder, Validators } from '@angular/forms';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { trimRequired } from 'src/app/share/form-validator/trim-required.validator';
-import { ServiceDataApi } from 'src/app/service-management/data-access/model/service-api.model';
+import { ServiceDataApi, ServicePagingApi } from 'src/app/service-management/data-access/model/service-api.model';
 import { getStorage, ref, uploadString } from 'firebase/storage';
 import { NzUploadFile } from 'ng-zorro-antd/upload';
 import { AccountPagingApi } from 'src/app/account-management/data-access/model/account-api.model';
 import { AccountApiService } from 'src/app/account-management/data-access/api/account.service';
 import { RoleType } from 'src/app/share/data-access/api/enum/role.enum';
 import { NzModalRef } from 'ng-zorro-antd/modal';
+import { ServiceApiService } from 'src/app/service-management/data-access/api/service-api.service';
 
 export interface BranchState {
   branchPaging: Paging<BranchPagingApi.Response>;
   acountPaging: Paging<AccountPagingApi.Response>;
+  servicePaging: Paging<ServicePagingApi.Response>;
   loadingCount: number;
   addressData: string[];
   serviceData: ServiceDataApi.Response;
@@ -56,6 +58,13 @@ const initialState: BranchState = {
     totalElements: 0,
     totalPages: 0,
   },
+  servicePaging: {
+    content: [],
+    current: 1,
+    pageSize: 10,
+    totalElements: 0,
+    totalPages: 0,
+  },
 };
 
 @Injectable()
@@ -68,7 +77,8 @@ export class BranchStore
     private _cApiSvc: CommonApiService,
     private _fb: NonNullableFormBuilder,
     private _nzMessageService: NzMessageService,
-    private _aApiSvc: AccountApiService
+    private _aApiSvc: AccountApiService,
+    private _sApiSvc: ServiceApiService,
   ) {
     super(initialState);
   }
@@ -103,6 +113,14 @@ export class BranchStore
       localStorage.getItem('branchId$')! === null
         ? ''
         : localStorage.getItem('branchId$')!,
+  };
+
+  pagingServiceRequest: ServicePagingApi.Request = {
+    current: 1,
+    pageSize: pagingSizeOptionsDefault[0],
+    search: '',
+    sorter: '',
+    orderDescending: false,
   };
 
   form = this._fb.group<BranchApi.RequestFormGroup>({
@@ -145,6 +163,25 @@ export class BranchStore
           tap({
             next: (resp) => {
               if (resp.content) this.patchState({ acountPaging: resp });
+            },
+            finalize: () => this.updateLoading(false),
+          }),
+          catchError(() => EMPTY)
+        )
+      )
+    )
+  );
+
+  readonly getServicePaging = this.effect<never>(
+    pipe(
+      tap(() => this.updateLoading(true)),
+      switchMap(() =>
+        this._sApiSvc.paging(this.pagingRequest).pipe(
+          tap({
+            next: (resp) => {
+              if (resp.content) this.patchState({ servicePaging: resp });
+              console.log(resp);
+
             },
             finalize: () => this.updateLoading(false),
           }),

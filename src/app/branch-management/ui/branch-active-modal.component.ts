@@ -64,7 +64,7 @@ import { BranchStore } from '../data-access/store/branch.store';
                 <nz-option
                   *ngFor="let data of vm.acountPaging.content"
                   [nzValue]="data.accountId"
-                  [nzLabel]="data.firstName + data.lastName + data.professionalTypeName"
+                  [nzLabel]="data.firstName + ' ' + data.lastName + data.professionalTypeName + ' ' + data.address"
                 ></nz-option>
               </nz-select>
             </nz-form-control>
@@ -80,15 +80,12 @@ import { BranchStore } from '../data-access/store/branch.store';
                 [nzMaxTagCount]="4"
                 nzMode="multiple"
                 nzPlaceHolder="Chọn nhân viên"
-                [formControl]="form.controls.staffIdList"
+                [formControl]="form.controls.service"
               >
-                <nz-option
-                  nzValue="OPERATOR_STAFF"
-                  nzLabel="Cắt tóc - 50000"
-                ></nz-option>
-                <nz-option
-                  nzValue="BRANCHMANAGER"
-                  nzLabel="Massage - 30000"
+              <nz-option
+                  *ngFor="let data of vm.servicePaging.content"
+                  [nzValue]="data.shopServiceId +' '+data.shopServicePrice"
+                  [nzLabel]="data.shopServiceName +' - '+ data.shopServicePrice"
                 ></nz-option>
               </nz-select>
             </nz-form-control>
@@ -127,6 +124,11 @@ export class BranchActiveModalComponent implements OnInit {
   ngOnInit() {}
 
   onSubmit() {
+    this.form.controls.serviceList.setValue([])
+    this.form.controls.service.value.forEach(value => {
+      let valueTmp = value.split(' ')
+      this.form.controls.serviceList.value.push({shopServiceId: valueTmp[0], price: valueTmp[1]})
+    })
     this.clickSubmit.emit();
   }
 
