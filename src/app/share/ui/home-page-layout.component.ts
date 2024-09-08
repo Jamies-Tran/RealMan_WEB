@@ -110,14 +110,21 @@ import { NzDropDownModule } from 'ng-zorro-antd/dropdown';
           </li>
 
           <!-- quản lí booking -->
+          <li
+            nz-menu-item
+            nzMatchRouter
+            [routerLink]="['/schedule-management', 'schedule']"
+          >
+            <span nz-icon nzType="home"></span>
+            <span>Quản lý lịch làm</span>
+          </li>
 
           <li nz-submenu nzTitle="Quản lý booking" nzIcon="team" *ngIf="role == 'RECEPTIONIST' || role == 'BRANCH_MANAGER'">
             <ul>
               <li
                 nz-menu-item
                 nzMatchRouter
-                [routerLink]="['/booking-management', 'booking-list']"
-                *ngIf="role == 'RECEPTIONIST' || role == 'BRANCH_MANAGER'"
+                [routerLink]="['/schedule-management', 'schedule']"
               >
                 Danh sách booking
               </li>
@@ -131,6 +138,7 @@ import { NzDropDownModule } from 'ng-zorro-antd/dropdown';
               </li>
             </ul>
           </li>
+
 
           <li nz-submenu nzTitle="Quản lý doanh thu" nzIcon="money-collect"  *ngIf="role == 'SHOP_OWNER'">
             <ul>
