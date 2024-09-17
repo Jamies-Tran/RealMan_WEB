@@ -13,5 +13,13 @@ const SCHEDULE_MANAGEMENT_ROUTES: Route[] = [
         (m) => m.ScheduleComponent
       ),
   },
+
+  {
+    path: 'plan-daily/:id',
+    loadComponent: () =>
+      import('./feature/plan-daily.component').then(
+        (m) => m.PlanDailyComponent
+      ),
+  },
 ];
 export default SCHEDULE_MANAGEMENT_ROUTES;

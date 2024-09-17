@@ -76,7 +76,7 @@ import { NzSelectChangeDirective } from 'src/app/share/ui/directive/nz-select-ch
             appNzTableDefaultSetting
             class="tw-mr-4"
             [nzData]="vm.servicePaging.content"
-            [nzTotal]="vm.servicePaging.totalElements"
+            [nzTotal]="vm.servicePaging.totalElement"
             [(nzPageIndex)]="sStore.pagingRequest.current"
             [(nzPageSize)]="sStore.pagingRequest.pageSize"
             (nzQueryParams)="onTableQueryParamsChange($event)"

@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { FormControl, NonNullableFormBuilder } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { NzBreadCrumbModule } from 'ng-zorro-antd/breadcrumb';
@@ -11,14 +11,12 @@ import { NzInputModule } from 'ng-zorro-antd/input';
 import { NzModalService } from 'ng-zorro-antd/modal';
 import { NzSelectModule } from 'ng-zorro-antd/select';
 import { NzTableModule, NzTableQueryParams } from 'ng-zorro-antd/table';
-import { tap } from 'rxjs';
 import { provideComponentStore } from '@ngrx/component-store';
 import { NzMessageService } from 'ng-zorro-antd/message';
-import { trimRequired } from 'src/app/share/form-validator/trim-required.validator';
 import { RxLet } from '@rx-angular/template/let';
 import { ScheduleStore } from '../data-access/store/schedule.store';
 import { MapShiftTypeNamePipe } from '../until/shift.pipe';
-import { ShiftType } from 'src/app/share/data-access/api/enum/shift.enum';
+import { NzTableDefaultSettingDirective } from 'src/app/share/ui/directive/nz-table-default-setting.directive';
 
 @Component({
   selector: 'app-schedule',
@@ -35,7 +33,7 @@ import { ShiftType } from 'src/app/share/data-access/api/enum/shift.enum';
     </nz-breadcrumb>
     <nz-divider></nz-divider>
     <div nz-row>
-      <div nz-col nzSpan="24" class="">
+      <div nz-col nzSpan="22" class="">
         <nz-input-group nzSearch [nzAddOnAfter]="suffixIconButton">
           <input type="text" nz-input placeholder="Tìm theo tên" />
         </nz-input-group>
@@ -45,6 +43,11 @@ import { ShiftType } from 'src/app/share/data-access/api/enum/shift.enum';
           </button>
         </ng-template>
       </div>
+      <div nz-col nzSpan="2" class="tw-text-center">
+        <button nz-button nzType="primary" (click)="createPlan()">
+          Tạo Lịch làm
+        </button>
+      </div>
       <!-- <div nz-row class="tw-mt-4 tw-flex"> -->
       <!-- </div> -->
       <div nz-col nzSpan="24" class="tw-mt-5">
@@ -52,10 +55,11 @@ import { ShiftType } from 'src/app/share/data-access/api/enum/shift.enum';
           <nz-table
             appNzTableDefaultSetting
             class="tw-mr-4"
-            [nzData]="fakeData.content"
-            [nzTotal]="fakeData.totalElements"
+            [nzData]="vm.schedulePaging.content"
+            [nzTotal]="vm.schedulePaging.totalElement"
             [(nzPageIndex)]="sStore.pagingRequest.current"
             [(nzPageSize)]="sStore.pagingRequest.pageSize"
+            (nzQueryParams)="onTableQueryParamsChange($event)"
             [nzShowTotal]="totalText"
             [nzLoading]="!!vm.loadingCount"
             nzShowSizeChanger
@@ -69,30 +73,80 @@ import { ShiftType } from 'src/app/share/data-access/api/enum/shift.enum';
               </ng-template>
               <tr>
                 <th>STT</th>
-                <th>Tên nhân viên</th>
-                <th>Thứ 2</th>
-                <th>Thứ 3</th>
-                <th>Thứ 4</th>
-                <th>Thứ 5</th>
-                <th>Thứ 6</th>
-                <th>Thứ 7</th>
-                <th>Chủ nhật</th>
+                <th>Tên Kế Hoạch</th>
+                <th>Trạng Thái</th>
                 <th></th>
               </tr>
             </thead>
-            <tbody>
-              <tr *ngFor="let data of fakeData.content; index as i">
+            <tbody *ngFor="let data of vm.schedulePaging.content; index as i">
+              <tr>
                 <td>{{ i + 1 }}</td>
-                <td>{{ data.name }}{{ ' - ' + data.phone }}</td>
-                <td>{{ data.schedules.mon | mapShiftTypeName }}</td>
-                <td>{{ data.schedules.tue | mapShiftTypeName }}</td>
-                <td>{{ data.schedules.wed | mapShiftTypeName }}</td>
-                <td>{{ data.schedules.thurs | mapShiftTypeName }}</td>
-                <td>{{ data.schedules.fri | mapShiftTypeName }}</td>
-                <td>{{ data.schedules.sat | mapShiftTypeName }}</td>
-                <td>{{ data.schedules.sun | mapShiftTypeName }}</td>
+                <td>{{ data.weeklyPlanName }}</td>
+                <td>{{ data.weeklyPlanStatusName }}</td>
                 <td class="tw-text-center">
-                  <button nz-button nzType="primary">Chỉnh sửa</button>
+                <button
+                    nz-button
+                    nzType="primary"
+                    nzDanger
+                    (click)="onActive(data.weeklyPlanId)"
+                    *ngIf="data.weeklyPlanStatusCode === 'DRAFT'"
+                  >
+                    Kích hoạt
+                  </button>
+                  <button
+                    nz-button
+                    class="tw-ml-3"
+                    nzType="primary"
+                    *ngIf="!sStore.pagingExpand.has(data.weeklyPlanId)"
+                    (click)="onEditRow(data.weeklyPlanId)"
+                  >
+                    Chi tiết
+                  </button>
+                </td>
+              </tr>
+              <tr *ngIf="sStore.pagingExpand.has(data.weeklyPlanId)">
+                <td colSpan="17">
+                  <div class="tw-flex tw-justify-end">
+                    <button
+                      nz-button
+                      nzDanger
+                      nzType="primary"
+                      nzSize="small"
+                      (click)="onClose()"
+                    >
+                      Đóng
+                    </button>
+                  </div>
+                </td>
+              </tr>
+              <tr *ngIf="sStore.pagingExpand.has(data.weeklyPlanId)">
+                <td colSpan="17">
+                  <nz-table
+                    [nzData]="
+                      vm.planDaily.value.dailyPlans
+                        ? vm.planDaily.value.dailyPlans
+                        : []
+                    "
+                    nzShowPagination="false"
+                    class="tw-my-6 tw-mr-6"
+                  >
+                    <thead>
+                      <tr>
+                        <th>Ngày</th>
+                        <th>Thứ</th>
+                        <th nzWidth="110px"></th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr *ngFor="let item of vm.planDaily.value.dailyPlans">
+                        <td>{{ item.date }}</td>
+                        <td>{{ item.dayInWeekName }}</td>
+                        <td>
+                          <button nz-button nzType="primary">Chi tiết</button>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </nz-table>
                 </td>
               </tr>
             </tbody>
@@ -116,9 +170,11 @@ import { ShiftType } from 'src/app/share/data-access/api/enum/shift.enum';
     NzSelectModule,
     RxLet,
     MapShiftTypeNamePipe,
+    NzTableDefaultSettingDirective,
+    RouterLink,
   ],
 })
-export class ScheduleComponent {
+export class ScheduleComponent implements OnInit {
   constructor(
     private _nzModalSvc: NzModalService,
     private _fb: NonNullableFormBuilder,
@@ -126,72 +182,50 @@ export class ScheduleComponent {
   ) {}
 
   vm$ = this.sStore.state$;
-  fakeData = {
-    totalElements: 0,
-    totalPages: 1,
-    pageSize: 10,
-    current: 0,
-    content: [
-      {
-        name: 'quan',
-        phone: '0387824877',
-        schedules: {
-          mon: ShiftType.MORNING,
-          tue: ShiftType.MORNING,
-          wed: ShiftType.MORNING,
-          thurs: ShiftType.MORNING,
-          fri: ShiftType.MORNING,
-          sat: ShiftType.MORNING,
-          sun: ShiftType.MORNING,
-        },
-      },
-      {
-        name: 'Quang',
-        phone: '1234512345',
-        schedules: {
-          mon: ShiftType.NIGHT,
-          tue: ShiftType.NIGHT,
-          wed: ShiftType.NIGHT,
-          thurs: ShiftType.NIGHT,
-          fri: ShiftType.NIGHT,
-          sat: ShiftType.NIGHT,
-          sun: ShiftType.NIGHT,
-        },
-      },
-      {
-        name: 'Tuan',
-        phone: '1231231231',
-        schedules: {
-          mon: ShiftType.MORNING,
-          tue: ShiftType.MORNING,
-          wed: ShiftType.MORNING,
-          thurs: ShiftType.MORNING,
-          fri: ShiftType.MORNING,
-          sat: ShiftType.MORNING,
-          sun: ShiftType.MORNING,
-        },
-      },
-      {
-        name: 'minh',
-        phone: '1234123412',
-        schedules: {
-          mon: ShiftType.NIGHT,
-          tue: ShiftType.NIGHT,
-          wed: ShiftType.NIGHT,
-          thurs: ShiftType.NIGHT,
-          fri: ShiftType.NIGHT,
-          sat: ShiftType.NIGHT,
-          sun: ShiftType.NIGHT,
-        },
-      },
-    ],
-  };
-  // onTableQueryParamsChange(params: NzTableQueryParams) {
-  //   const { sort } = params;
-  //   const currentSort = sort.find((item) => item.value !== null);
-  //   this.sStore.pagingRequest.sorter = currentSort?.key ?? '';
-  //   this.sStore.pagingRequest.orderDescending = currentSort?.value !== 'ascend';
-  //   this.sStore.getServicePaging();
-  //   console.log();
-  // }
+  today = new Date();
+
+  ngOnInit(): void {
+    console.log(this.today.toISOString());
+  }
+
+  createPlan() {
+    this.sStore.createPlan({
+      model: { pickupDateReq: this.today.toISOString() },
+    });
+  }
+
+  onTableQueryParamsChange(params: NzTableQueryParams) {
+    const { sort } = params;
+    const currentSort = sort.find((item) => item.value !== null);
+    this.sStore.pagingRequest.sorter = currentSort?.key ?? '';
+    this.sStore.pagingRequest.orderDescending = currentSort?.value !== 'ascend';
+    this.sStore.getPlanPaging();
+    console.log();
+  }
+
+  onSearch() {
+    this.sStore.pagingRequest.search = this.sStore.pagingRequest.search.replace(
+      /[\t\n\r]/,
+      ''
+    );
+    if (this.sStore.pagingRequest.current !== 1) {
+      this.sStore.pagingRequest.current = 1;
+    } else {
+      this.sStore.getPlanPaging();
+    }
+  }
+
+  onEditRow(id: number) {
+    this.sStore.pagingExpand.clear();
+    this.sStore.pagingExpand.add(id);
+    this.sStore.getWeeklyPlanDetailPaging(id);
+  }
+
+  onClose() {
+    this.sStore.pagingExpand.clear();
+  }
+
+  onActive(id: number){
+    this.sStore.activeWeeklyPlan(id)
+  }
 }

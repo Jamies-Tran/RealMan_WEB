@@ -77,7 +77,7 @@ import { BranchActiveModalComponent } from '../ui/branch-active-modal.component'
             appNzTableDefaultSetting
             class="tw-mr-4"
             [nzData]="vm.branchPaging.content"
-            [nzTotal]="vm.branchPaging.totalElements"
+            [nzTotal]="vm.branchPaging.totalElement"
             [(nzPageIndex)]="bStore.pagingRequest.current"
             [(nzPageSize)]="bStore.pagingRequest.pageSize"
             (nzQueryParams)="onTableQueryParamsChange($event)"

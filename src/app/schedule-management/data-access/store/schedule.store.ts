@@ -15,22 +15,35 @@ import { AutocompleteApi } from 'src/app/share/data-access/model/autocomplete-ap
 import { CommonApiService } from 'src/app/share/data-access/api/common.service';
 import { NonNullableFormBuilder, Validators } from '@angular/forms';
 import { NzMessageService } from 'ng-zorro-antd/message';
-import { SchedulePagingApi } from '../model/schedule-api.model';
 import { ScheduleApiService } from '../api/schedule-api.service';
+import { PlanCreateApi, PlanPagingApi, PlanWeeklyDetailApi } from '../model/schedule-api.model';
+import { ActivatedRoute } from '@angular/router';
+import { PlanDailyApi } from '../model/plan-daily-api.model';
 
 export interface ScheduleState {
-  schedulePaging: Paging<SchedulePagingApi.Response>;
+  schedulePaging: Paging<PlanPagingApi.Response>;
   loadingCount: number;
+  planDaily: PlanWeeklyDetailApi.Response;
 }
 
 const initialState: ScheduleState = {
   schedulePaging: {
     content: [],
-    current: 1,
+    currentPage: 1,
     pageSize: 10,
-    totalElements: 0,
-    totalPages: 0,
+    totalElement: 0,
+    totalPage: 0,
   },
+  planDaily: { value: {
+    weeklyPlanId: '',
+      dailyPlanId: '',
+      date: '',
+      dayInWeekCode: '',
+      dayInWeekName: '',
+      dailyPlanStatusCode: '',
+      dailyPlanStatusName: '',
+      dailyPlans: []
+  } },
   loadingCount: 0,
 };
 
@@ -40,15 +53,19 @@ export class ScheduleStore extends ComponentStore<ScheduleState> {
     private _sApiSvc: ScheduleApiService,
     private _cApiSvc: CommonApiService,
     private _fb: NonNullableFormBuilder,
-    private _nzMessageService: NzMessageService
+    private _nzMessageService: NzMessageService,
+    private _activatedRoute: ActivatedRoute
   ) {
     super(initialState);
   }
 
   addressData!: AutocompleteApi.Response;
   options: string[] = [];
+  id = Number(this._activatedRoute.snapshot.paramMap.get('id'));
 
-  pagingRequest: SchedulePagingApi.Request = {
+  pagingExpand = new Set<number>();
+
+  pagingRequest: PlanPagingApi.Request = {
     current: 1,
     pageSize: pagingSizeOptionsDefault[0],
     search: '',
@@ -56,22 +73,79 @@ export class ScheduleStore extends ComponentStore<ScheduleState> {
     orderDescending: false,
   };
 
-  // readonly getServicePaging = this.effect<never>(
-  //   pipe(
-  //     tap(() => this.updateLoading(true)),
-  //     switchMap(() =>
-  //       this._sApiSvc.paging(this.pagingRequest).pipe(
-  //         tap({
-  //           next: (resp) => {
-  //             if (resp.content) this.patchState({ schedulePaging: resp });
-  //           },
-  //           finalize: () => this.updateLoading(false),
-  //         }),
-  //         catchError(() => EMPTY)
-  //       )
-  //     )
-  //   )
-  // );
+  readonly getPlanPaging = this.effect<never>(
+    pipe(
+      tap(() => this.updateLoading(true)),
+      switchMap(() =>
+        this._sApiSvc.paging(this.pagingRequest).pipe(
+          tap({
+            next: (resp) => {
+              if (resp.content) this.patchState({ schedulePaging: resp });
+            },
+            finalize: () => this.updateLoading(false),
+          }),
+          catchError(() => EMPTY)
+        )
+      )
+    )
+  );
+
+  readonly getWeeklyPlanDetailPaging = this.effect<number>(
+    pipe(
+      tap(() => this.updateLoading(true)),
+      switchMap((id) =>
+        this._sApiSvc.getPlanDaily(id).pipe(
+          tap({
+            next: (resp) => {
+              if (resp) this.patchState({ planDaily: resp });
+            },
+            finalize: () => this.updateLoading(false),
+          }),
+          catchError(() => EMPTY)
+        )
+      )
+    )
+  );
+
+  readonly activeWeeklyPlan = this.effect<number>(
+    pipe(
+      tap(() => this.updateLoading(true)),
+      switchMap((id) =>
+        this._sApiSvc.activeWeeklyPlan(id).pipe(
+          tap({
+            next: (resp) => {
+              this._nzMessageService.success('Đã kích hoạt.');
+              this.getPlanPaging()
+            },
+            error: () => this._nzMessageService.error('Kích hoạt thất bại.'),
+            finalize: () => this.updateLoading(false),
+          }),
+          catchError(() => EMPTY)
+        )
+      )
+    )
+  );
+
+  readonly createPlan = this.effect<{ model: PlanCreateApi.Request }>(
+    ($params) =>
+      $params.pipe(
+        tap(() => this.updateLoading(true)),
+        switchMap(({ model }) =>
+          this._sApiSvc.createPlan(model).pipe(
+            tap({
+              next: (resp) => {
+
+                this.getPlanPaging();
+                this._nzMessageService.success('Tạo lịch thành công.');
+              },
+              error: () => this._nzMessageService.error('Tạo lịch thất bại.'),
+              finalize: () => this.updateLoading(false),
+            }),
+            catchError(() => EMPTY)
+          )
+        )
+      )
+  );
 
   readonly updateLoading = this.updater((s, isAdd: boolean) => ({
     ...s,

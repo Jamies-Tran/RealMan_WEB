@@ -41,10 +41,10 @@ export interface AccountState {
 const initialState: AccountState = {
   acountPaging: {
     content: [],
-    current: 1,
+    currentPage: 1,
     pageSize: 10,
-    totalElements: 0,
-    totalPages: 0,
+    totalElement: 0,
+    totalPage: 0,
   },
   loadingCount: 0,
   branchNameData: { values: [] },
@@ -102,7 +102,7 @@ export class AccountStore extends ComponentStore<AccountState> {
     thumbnail: this._fb.control('123'),
     professionalTypeCode: this._fb.control(''),
     professionalTypeName: this._fb.control(''),
-    staffCode: this._fb.control(''),
+    address: this._fb.control(''),
   });
 
   readonly getAccountPaging = this.effect<never>(

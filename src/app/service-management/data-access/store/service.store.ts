@@ -29,10 +29,10 @@ export interface ServiceState {
 const initialState: ServiceState = {
   servicePaging: {
     content: [],
-    current: 1,
+    currentPage: 1,
     pageSize: 10,
-    totalElements: 0,
-    totalPages: 0,
+    totalElement: 0,
+    totalPage: 0,
   },
   loadingCount: 0,
   categoryData: { values: [] },

@@ -114,7 +114,7 @@ import { NzPopconfirmModule } from 'ng-zorro-antd/popconfirm';
             appNzTableDefaultSetting
             class="tw-mr-4"
             [nzData]="vm.bookingPaging.content"
-            [nzTotal]="vm.bookingPaging.totalElements"
+            [nzTotal]="vm.bookingPaging.totalElement"
             [(nzPageIndex)]="bStore.pagingRequest.current"
             [(nzPageSize)]="bStore.pagingRequest.pageSize"
             (nzQueryParams)="onTableQueryParamsChange($event)"

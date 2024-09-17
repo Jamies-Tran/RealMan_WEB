@@ -15,6 +15,10 @@ import { differenceInCalendarDays } from 'date-fns';
 import { NzDatePickerModule } from 'ng-zorro-antd/date-picker';
 import { NzDividerModule } from 'ng-zorro-antd/divider';
 import { NzSelectChangeDirective } from 'src/app/share/ui/directive/nz-select-change.directive';
+import { NzAutocompleteModule } from 'ng-zorro-antd/auto-complete';
+import { AccountStore } from '../data-access/store/account.store';
+import { provideComponentStore } from '@ngrx/component-store';
+import { NzMessageService } from 'ng-zorro-antd/message';
 
 @Component({
   selector: 'app-hangtag-add-or-update-modal',
@@ -34,10 +38,12 @@ import { NzSelectChangeDirective } from 'src/app/share/ui/directive/nz-select-ch
     NzDatePickerModule,
     NzDividerModule,
     NzModalModule,
-    NzSelectChangeDirective
+    NzSelectChangeDirective,
+    NzAutocompleteModule
   ],
+  providers: [provideComponentStore(AccountStore), NzMessageService],
   template: `
-    <div>
+    <div *rxLet="vm$ as vm">
     <form nz-form [formGroup]="form">
         <div nz-row class="tw-ml-[12%]">
           <!-- first name -->
@@ -71,14 +77,21 @@ import { NzSelectChangeDirective } from 'src/app/share/ui/directive/nz-select-ch
           <!-- dia chi -->
 
           <nz-form-item nz-col nzSpan="12" class="">
-            <nz-form-label class="tw-ml-3" nzRequired>Mã nhân viên</nz-form-label>
-            <nz-form-control nzErrorTip="Vui lòng nhập mã nhân viên">
-            <input
-                class="tw-rounded-md tw-w-[70%]"
-                placeholder="Nhập mã nhân viên"
-                [formControl]="form.controls.staffCode"
+          <nz-form-label class="tw-ml-3" nzRequired>Địa chỉ</nz-form-label>
+            <nz-form-control nzErrorTip="Vui lòng nhập địa chỉ">
+              <input
+                class=" tw-w-[70%]"
+                placeholder="Nhập địa chỉ"
+                [formControl]="aStore.form.controls.address"
                 nz-input
+                (input)="getAddress($event)"
+                [nzAutocomplete]="auto"
               />
+              <nz-autocomplete
+                [nzDataSource]="vm.addressData"
+                nzBackfill
+                #auto
+              ></nz-autocomplete>
               <!-- <nz-autocomplete
                 [nzDataSource]="vm.addressData"
                 nzBackfill
@@ -195,7 +208,11 @@ import { NzSelectChangeDirective } from 'src/app/share/ui/directive/nz-select-ch
                 class="tw-w-[70%]"
                 [formControl]="form.controls.role"
               >
-                <nz-option nzValue="OPERATOR_STAFF" nzLabel="Nhân viên vận hành"></nz-option>
+                <nz-option nzValue="OPERATOR_STAFF" nzLabel="Nhân viên"></nz-option>
+                <nz-option
+                  nzValue="RECEPTIONIST"
+                  nzLabel="Lễ Tân"
+                ></nz-option>
                 <nz-option
                   nzValue="BRANCHMANAGER"
                   nzLabel="Quản lý chi nhánh"
@@ -234,8 +251,9 @@ export class AccountAddModalComponent implements OnInit {
 
   @Input() form!: FormGroup<AccountAddApi.RequestFormGroup | AccountUpdateApi.RequestFormGroup>;
   @Output() clickSubmit = new EventEmitter<void>();
+  vm$ = this.aStore.state$;
 
-  constructor(private _nzModalRef: NzModalRef, private _cdr: ChangeDetectorRef) {}
+  constructor(private _nzModalRef: NzModalRef, private _cdr: ChangeDetectorRef, public aStore: AccountStore) {}
 
   ngOnInit() {
   }
@@ -256,13 +274,20 @@ export class AccountAddModalComponent implements OnInit {
 
 
 onChangeLicense() {
-    if(this.form.controls.role.value === "BRANCHMANAGER" || this.form.controls.role.value === ""){
+    if(this.form.controls.role.value === "BRANCHMANAGER" || this.form.controls.role.value === "" || this.form.controls.role.value === "RECEPTIONIST"){
       this.form.controls.professionalTypeCode.disable()
       this.form.controls.professionalTypeCode.setValue("")
     }
     else {
       this.form.controls.professionalTypeCode.enable()
     }
+  }
+
+  getAddress(event: Event) {
+    const value = (event.target as HTMLInputElement).value;
+    this.aStore.getAddress(value);
+    console.log(value);
+
   }
 
 }

@@ -1,6 +1,6 @@
-import { ShiftType } from "src/app/share/data-access/api/enum/shift.enum";
+import { ShiftType } from 'src/app/share/data-access/api/enum/shift.enum';
 
-export namespace SchedulePagingApi {
+export namespace PlanPagingApi {
   export interface Request {
     search: string;
     current: number;
@@ -10,18 +10,45 @@ export namespace SchedulePagingApi {
   }
 
   export interface Response {
-    name: string;
-    phone: string;
-    schedules: schedule;
+    weeklyPlanId: number;
+    weeklyPlanName: string;
+    branchId: string;
+    weeklyPlanStatusCode: string;
+    weeklyPlanStatusName: string;
+    dailyPlanActive: string;
+    dailyPlans: string | null;
+  }
+}
+
+export namespace PlanCreateApi {
+  export interface Request {
+    pickupDateReq: string;
+  }
+}
+
+export namespace PlanWeeklyDetailApi {
+  export interface Response {
+    value: {
+      weeklyPlanId: string;
+      dailyPlanId: string;
+      date: string;
+      dayInWeekCode: string;
+      dayInWeekName: string;
+      dailyPlanStatusCode: string;
+      dailyPlanStatusName: string;
+      dailyPlans: dailyPlanAccounts;
+    };
   }
 
-  export type schedule = {
-    mon: ShiftType;
-    tue: ShiftType;
-    wed: ShiftType;
-    thurs: ShiftType;
-    fri: ShiftType;
-    sat: ShiftType;
-    sun: ShiftType;
-  };
+  export type dailyPlanAccounts = {
+    weeklyPlanId: number;
+    dailyPlanId: number;
+    date: string;
+    dayInWeekCode: string;
+    dayInWeekName: string;
+    dailyPlanStatusCode: string;
+    dailyPlanStatusName: string;
+    dailyPlanAccounts: string | null;
+    dailyPlanServices: string | null;
+  }[]
 }

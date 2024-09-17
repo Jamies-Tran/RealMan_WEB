@@ -6,7 +6,7 @@ export namespace AccountAddApi {
     firstName: string;
     lastName: string;
     phone: string;
-    staffCode: string;
+    address: string;
     professionalTypeCode: string;
     professionalTypeName: string;
     role: string;
@@ -25,7 +25,7 @@ export namespace AccountAddApi {
     thumbnail: FormControl<string>;
     professionalTypeCode: FormControl<string>;
     professionalTypeName: FormControl<string>;
-    staffCode: FormControl<string>;
+    address: FormControl<string>;
   };
 }
 
@@ -66,7 +66,7 @@ export namespace AccountUpdateApi {
     firstName: string;
     lastName: string;
     phone: string;
-    staffCode: string;
+    address: string;
     professionalTypeCode: string;
     professionalTypeName: string;
     role: string;
@@ -85,7 +85,7 @@ export namespace AccountUpdateApi {
     thumbnail: FormControl<string>;
     professionalTypeCode: FormControl<string>;
     professionalTypeName: FormControl<string>;
-    staffCode: FormControl<string>;
+    address: FormControl<string>;
   };
 
   export interface Response {

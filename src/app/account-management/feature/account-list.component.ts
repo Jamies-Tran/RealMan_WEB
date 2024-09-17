@@ -100,7 +100,7 @@ import { tap } from 'rxjs';
             appNzTableDefaultSetting
             class="tw-mr-4"
             [nzData]="vm.acountPaging.content"
-            [nzTotal]="vm.acountPaging.totalElements"
+            [nzTotal]="vm.acountPaging.totalElement"
             [(nzPageIndex)]="aStore.pagingRequest.current"
             [(nzPageSize)]="aStore.pagingRequest.pageSize"
             (nzQueryParams)="onTableQueryParamsChange($event)"
@@ -218,7 +218,7 @@ export class AccountListComponent {
     thumbnail: this._fb.control('123'),
     professionalTypeCode: this._fb.control({value: '', disabled: true}),
     professionalTypeName: this._fb.control(''),
-    staffCode: this._fb.control(''),
+    address: this._fb.control(''),
     });
 
 
