@@ -232,8 +232,8 @@ export class AccountStore extends ComponentStore<AccountState> {
               this.getAccountPaging()
               modalRef.close()
             },
-            error: () =>
-              this._nzMessageService.error('Đăng ký tài khoản thất bại.'),
+            error: (error) =>
+              this._nzMessageService.error(error),
             finalize: () => this.updateLoading(false),
           }),
           catchError(() => EMPTY)

@@ -70,6 +70,6 @@ export class AccountApiService {
   }
 
   private handleError(error: HttpErrorResponse) {
-    return throwError(error.error['message']);
+    return throwError(error.error['errorMsg']);
   }
 }

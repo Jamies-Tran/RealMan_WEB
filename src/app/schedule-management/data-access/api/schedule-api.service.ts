@@ -41,10 +41,17 @@ export class ScheduleApiService {
       .pipe(catchError(this.handleError));
   }
 
-  public getPlanDaily(id: number) {
+  public getWeekyPlanDetail(id: number) {
     const url = `${this.REST_API_SERVER}/web/weekly-plan/${id}`;
     return this._http
       .get<PlanWeeklyDetailApi.Response>(url, this.httpOptions)
+      .pipe(catchError(this.handleError));
+  }
+
+  public getDailyPlan(id: number) {
+    const url = `${this.REST_API_SERVER}/web/daily-plan/${id}`;
+    return this._http
+      .get<PlanDailyApi.Response>(url, this.httpOptions)
       .pipe(catchError(this.handleError));
   }
 
@@ -55,6 +62,7 @@ export class ScheduleApiService {
       .pipe(catchError(this.handleError));
   }
 
+
   // public updateBranch(id: number, model: BranchUpdateApi.Request) {
   //   const url = `${this.REST_API_SERVER}/v1/branch/${id}`;
   //   return this._http
@@ -63,6 +71,6 @@ export class ScheduleApiService {
   // }
 
   private handleError(error: HttpErrorResponse) {
-    return throwError(error.error['message']);
+    return throwError(error.error['errorMsg']);
   }
 }

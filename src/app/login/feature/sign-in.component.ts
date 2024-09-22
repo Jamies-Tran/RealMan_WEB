@@ -108,7 +108,8 @@ export class SignInComponent implements OnInit {
           localStorage.setItem('phone', this.validateForm.controls.staffCode.getRawValue())
           localStorage.setItem('token$', data['value']['accessToken'])
         },
-        (error) => {this._nzMessageService.error('Mã nhân viên chưa được đăng kí.');}
+        (error) => {this._nzMessageService.error(error);
+        }
       );
   }
 

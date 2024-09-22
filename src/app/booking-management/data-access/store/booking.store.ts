@@ -224,7 +224,7 @@ export class BookingStore
             next: (resp) => {
               this._nzMessageService.success('Xác nhận thanh toán thành công');
             },
-            error: () => this._nzMessageService.error('Xác nhận thanh toán thất bại.'),
+            error: (error) => this._nzMessageService.error(error),
             finalize: () => this.updateLoading(false),
           }),
           catchError(() => EMPTY)

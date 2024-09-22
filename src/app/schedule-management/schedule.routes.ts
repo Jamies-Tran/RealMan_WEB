@@ -14,12 +14,12 @@ const SCHEDULE_MANAGEMENT_ROUTES: Route[] = [
       ),
   },
 
-  {
-    path: 'plan-daily/:id',
-    loadComponent: () =>
-      import('./feature/plan-daily.component').then(
-        (m) => m.PlanDailyComponent
-      ),
-  },
+  // {
+  //   path: 'plan-daily/:id',
+  //   loadComponent: () =>
+  //     import('./feature/plan-daily.component').then(
+  //       (m) => m.PlanDailyComponent
+  //     ),
+  // },
 ];
 export default SCHEDULE_MANAGEMENT_ROUTES;

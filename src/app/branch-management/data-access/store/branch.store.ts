@@ -252,8 +252,8 @@ export class BranchStore
               this.fileList = [];
               this._nzMessageService.success('Đăng ký chi nhánh thành công');
             },
-            error: () =>
-              this._nzMessageService.error('Đăng ký chi nhánh thất bại.'),
+            error: (error) =>
+              this._nzMessageService.error(error),
             finalize: () => this.updateLoading(false),
           }),
           catchError(() => EMPTY)

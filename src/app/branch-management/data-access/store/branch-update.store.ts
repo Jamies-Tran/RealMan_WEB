@@ -195,8 +195,8 @@ export class BranchUpdateStore
               });
               this._nzMessageService.success('Cập nhật chi nhánh thành công');
             },
-            error: () =>
-              this._nzMessageService.error('Cập nhật chi nhánh thất bại.'),
+            error: (error) =>
+              this._nzMessageService.error(error),
             finalize: () => this.updateLoading(false),
           }),
           catchError(() => EMPTY)

@@ -68,7 +68,7 @@ import { NzTableDefaultSettingDirective } from 'src/app/share/ui/directive/nz-ta
               <ng-template #totalText let-total let-range="range">
                 <span
                   >{{ range[0] }} - {{ range[1] }} of {{ total }}
-                  {{ 'Staffs' }}</span
+                  {{ 'Plans' }}</span
                 >
               </ng-template>
               <tr>
@@ -84,10 +84,9 @@ import { NzTableDefaultSettingDirective } from 'src/app/share/ui/directive/nz-ta
                 <td>{{ data.weeklyPlanName }}</td>
                 <td>{{ data.weeklyPlanStatusName }}</td>
                 <td class="tw-text-center">
-                <button
+                  <button
                     nz-button
                     nzType="primary"
-                    nzDanger
                     (click)="onActive(data.weeklyPlanId)"
                     *ngIf="data.weeklyPlanStatusCode === 'DRAFT'"
                   >
@@ -102,9 +101,19 @@ import { NzTableDefaultSettingDirective } from 'src/app/share/ui/directive/nz-ta
                   >
                     Chi tiết
                   </button>
+                  <button
+                    nz-button
+                    nzDanger
+                    nzType="primary"
+                    class="tw-ml-3"
+                    *ngIf="sStore.pagingExpand.has(data.weeklyPlanId)"
+                    (click)="onClose()"
+                  >
+                    Đóng
+                  </button>
                 </td>
               </tr>
-              <tr *ngIf="sStore.pagingExpand.has(data.weeklyPlanId)">
+              <!-- <tr *ngIf="sStore.pagingExpand.has(data.weeklyPlanId)">
                 <td colSpan="17">
                   <div class="tw-flex tw-justify-end">
                     <button
@@ -118,13 +127,14 @@ import { NzTableDefaultSettingDirective } from 'src/app/share/ui/directive/nz-ta
                     </button>
                   </div>
                 </td>
-              </tr>
+              </tr> -->
               <tr *ngIf="sStore.pagingExpand.has(data.weeklyPlanId)">
                 <td colSpan="17">
                   <nz-table
+                    appNzTableDefaultSetting
                     [nzData]="
-                      vm.planDaily.value.dailyPlans
-                        ? vm.planDaily.value.dailyPlans
+                      vm.planWeeklyDetail.value.dailyPlans
+                        ? vm.planWeeklyDetail.value.dailyPlans
                         : []
                     "
                     nzShowPagination="false"
@@ -137,12 +147,74 @@ import { NzTableDefaultSettingDirective } from 'src/app/share/ui/directive/nz-ta
                         <th nzWidth="110px"></th>
                       </tr>
                     </thead>
-                    <tbody>
-                      <tr *ngFor="let item of vm.planDaily.value.dailyPlans">
+                    <tbody
+                      *ngFor="let item of vm.planWeeklyDetail.value.dailyPlans"
+                    >
+                      <tr>
                         <td>{{ item.date }}</td>
                         <td>{{ item.dayInWeekName }}</td>
                         <td>
-                          <button nz-button nzType="primary">Chi tiết</button>
+                          <button
+                            nz-button
+                            class="tw-ml-3"
+                            nzType="primary"
+                            *ngIf="
+                              !sStore.pagingSubRowExpand.has(item.dailyPlanId)
+                            "
+                            (click)="onEditSubRow(item.dailyPlanId)"
+                          >
+                            Chi tiết
+                          </button>
+                          <button
+                            nz-button
+                            nzDanger
+                            nzType="primary"
+                            class="tw-ml-3"
+                            *ngIf="
+                              sStore.pagingSubRowExpand.has(item.dailyPlanId)
+                            "
+                            (click)="oncloseSubRow()"
+                          >
+                            Đóng
+                          </button>
+                        </td>
+                      </tr>
+                      <tr *ngIf="sStore.pagingSubRowExpand.has(item.dailyPlanId)">
+                        <td colSpan="17">
+                          <nz-table
+                            [nzData]="
+                              vm.planDaily.value.dailyPlanAccounts
+                                ? vm.planDaily.value.dailyPlanAccounts
+                                : []
+                            "
+                            nzShowPagination="false"
+                            class="tw-my-6 tw-mr-6"
+                          >
+                            <thead>
+                              <tr>
+                                <th>Họ và Tên</th>
+                                <th>Số điện thoại</th>
+                                <th>Ca làm</th>
+                                <th></th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              <tr
+                                *ngFor="
+                                  let itemDaily of vm.planDaily.value.dailyPlanAccounts
+                                "
+                              >
+                                <td>{{ itemDaily.fullName }}</td>
+                                <td>{{ itemDaily.phone }}</td>
+                                <td>{{ itemDaily.shiftName }}</td>
+                                <td>
+                                  <button nz-button nzType="primary">
+                                    Chỉnh sửa
+                                  </button>
+                                </td>
+                              </tr>
+                            </tbody>
+                          </nz-table>
                         </td>
                       </tr>
                     </tbody>
@@ -203,6 +275,16 @@ export class ScheduleComponent implements OnInit {
     console.log();
   }
 
+  // onTableDailyQueryParamsChange(params: NzTableQueryParams) {
+  //   const { sort } = params;
+  //   const currentSort = sort.find((item) => item.value !== null);
+  //   this.sStore.pagingRequestPlanDaily.sorter = currentSort?.key ?? '';
+  //   this.sStore.pagingRequestPlanDaily.orderDescending =
+  //     currentSort?.value !== 'ascend';
+  //   this.sStore.getPlanDailyPaging();
+  //   console.log();
+  // }
+
   onSearch() {
     this.sStore.pagingRequest.search = this.sStore.pagingRequest.search.replace(
       /[\t\n\r]/,
@@ -217,15 +299,30 @@ export class ScheduleComponent implements OnInit {
 
   onEditRow(id: number) {
     this.sStore.pagingExpand.clear();
+    this.sStore.pagingSubRowExpand.clear();
     this.sStore.pagingExpand.add(id);
+
     this.sStore.getWeeklyPlanDetailPaging(id);
+  }
+
+  onEditSubRow(id: number) {
+
+    console.log(this.sStore.pagingSubRowExpand);
+    this.sStore.pagingSubRowExpand.clear();
+    this.sStore.pagingSubRowExpand.add(id);
+    // this.sStore.pagingRequestPlanDaily.idPlanDaily = id
+    this.sStore.getPlanDailyPaging(id);
   }
 
   onClose() {
     this.sStore.pagingExpand.clear();
   }
 
-  onActive(id: number){
-    this.sStore.activeWeeklyPlan(id)
+  oncloseSubRow() {
+    this.sStore.pagingSubRowExpand.clear();
+  }
+
+  onActive(id: number) {
+    this.sStore.activeWeeklyPlan(id);
   }
 }

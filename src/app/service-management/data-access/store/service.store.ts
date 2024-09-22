@@ -237,7 +237,7 @@ export class ServiceStore
               });
               this._nzMessageService.success('Cập nhật dịch vụ thành công');
             },
-            error: () => this._nzMessageService.error('Cập nhật dịch vụ thất bại.'),
+            error: (error) => this._nzMessageService.error(error),
             finalize: () => this.updateLoading(false),
           }),
           catchError(() => EMPTY)

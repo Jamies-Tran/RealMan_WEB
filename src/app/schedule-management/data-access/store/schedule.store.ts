@@ -23,7 +23,8 @@ import { PlanDailyApi } from '../model/plan-daily-api.model';
 export interface ScheduleState {
   schedulePaging: Paging<PlanPagingApi.Response>;
   loadingCount: number;
-  planDaily: PlanWeeklyDetailApi.Response;
+  planWeeklyDetail: PlanWeeklyDetailApi.Response;
+  planDaily: PlanDailyApi.Response;
 }
 
 const initialState: ScheduleState = {
@@ -34,7 +35,7 @@ const initialState: ScheduleState = {
     totalElement: 0,
     totalPage: 0,
   },
-  planDaily: { value: {
+  planWeeklyDetail: { value: {
     weeklyPlanId: '',
       dailyPlanId: '',
       date: '',
@@ -44,6 +45,16 @@ const initialState: ScheduleState = {
       dailyPlanStatusName: '',
       dailyPlans: []
   } },
+  planDaily: { value: {
+        weeklyPlanId: '',
+          dailyPlanId: '',
+          date: '',
+          dayInWeekCode: '',
+          dayInWeekName: '',
+          dailyPlanStatusCode: '',
+          dailyPlanStatusName: '',
+          dailyPlanAccounts: []
+      } },
   loadingCount: 0,
 };
 
@@ -64,6 +75,7 @@ export class ScheduleStore extends ComponentStore<ScheduleState> {
   id = Number(this._activatedRoute.snapshot.paramMap.get('id'));
 
   pagingExpand = new Set<number>();
+  pagingSubRowExpand = new Set<number>();
 
   pagingRequest: PlanPagingApi.Request = {
     current: 1,
@@ -72,6 +84,14 @@ export class ScheduleStore extends ComponentStore<ScheduleState> {
     sorter: '',
     orderDescending: false,
   };
+
+  // pagingRequestPlanDaily: PlanDailyApi.Request = {
+  //   current: 1,
+  //   pageSize: pagingSizeOptionsDefault[0],
+  //   search: '',
+  //   sorter: '',
+  //   orderDescending: false,
+  // };
 
   readonly getPlanPaging = this.effect<never>(
     pipe(
@@ -94,7 +114,24 @@ export class ScheduleStore extends ComponentStore<ScheduleState> {
     pipe(
       tap(() => this.updateLoading(true)),
       switchMap((id) =>
-        this._sApiSvc.getPlanDaily(id).pipe(
+        this._sApiSvc.getWeekyPlanDetail(id).pipe(
+          tap({
+            next: (resp) => {
+              if (resp) this.patchState({ planWeeklyDetail: resp });
+            },
+            finalize: () => this.updateLoading(false),
+          }),
+          catchError(() => EMPTY)
+        )
+      )
+    )
+  );
+
+  readonly getPlanDailyPaging = this.effect<number>(
+    pipe(
+      tap(() => this.updateLoading(true)),
+      switchMap((id) =>
+        this._sApiSvc.getDailyPlan(id).pipe(
           tap({
             next: (resp) => {
               if (resp) this.patchState({ planDaily: resp });
@@ -138,7 +175,7 @@ export class ScheduleStore extends ComponentStore<ScheduleState> {
                 this.getPlanPaging();
                 this._nzMessageService.success('Tạo lịch thành công.');
               },
-              error: () => this._nzMessageService.error('Tạo lịch thất bại.'),
+              error: (error) => this._nzMessageService.error(error),
               finalize: () => this.updateLoading(false),
             }),
             catchError(() => EMPTY)
