@@ -81,7 +81,7 @@ import { tap } from 'rxjs';
         </button>
       </div>
       <nz-select
-        *ngIf="role$ === roleType.SHOP_OWNER"
+        *ngIf="role$ === roleType.SHOPOWNER"
         class="tw-w-[150px] tw-mt-5"
         nzPlaceHolder="Chọn chức vụ"
         (nzSelectChange)="onChangeLicense()"
@@ -112,7 +112,7 @@ import { tap } from 'rxjs';
               <ng-template #totalText let-total let-range="range">
                 <span
                   >{{ range[0] }} - {{ range[1] }} of {{ total }}
-                  {{ 'Branches' }}</span
+                  {{ 'Staffs' }}</span
                 >
               </ng-template>
               <tr>

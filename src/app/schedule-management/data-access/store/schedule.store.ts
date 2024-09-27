@@ -18,7 +18,8 @@ import { NzMessageService } from 'ng-zorro-antd/message';
 import { ScheduleApiService } from '../api/schedule-api.service';
 import { PlanCreateApi, PlanPagingApi, PlanWeeklyDetailApi } from '../model/schedule-api.model';
 import { ActivatedRoute } from '@angular/router';
-import { PlanDailyApi } from '../model/plan-daily-api.model';
+import { PlanDailyApi, PlanDailyUpdateModalApi } from '../model/plan-daily-api.model';
+import { NzModalRef } from 'ng-zorro-antd/modal';
 
 export interface ScheduleState {
   schedulePaging: Paging<PlanPagingApi.Response>;
@@ -43,7 +44,8 @@ const initialState: ScheduleState = {
       dayInWeekName: '',
       dailyPlanStatusCode: '',
       dailyPlanStatusName: '',
-      dailyPlans: []
+      dailyPlans: [],
+      dailyPlanServices: []
   } },
   planDaily: { value: {
         weeklyPlanId: '',
@@ -53,7 +55,8 @@ const initialState: ScheduleState = {
           dayInWeekName: '',
           dailyPlanStatusCode: '',
           dailyPlanStatusName: '',
-          dailyPlanAccounts: []
+          dailyPlanAccounts: [],
+          dailyPlanServices: []
       } },
   loadingCount: 0,
 };
@@ -154,7 +157,27 @@ export class ScheduleStore extends ComponentStore<ScheduleState> {
               this._nzMessageService.success('Đã kích hoạt.');
               this.getPlanPaging()
             },
-            error: () => this._nzMessageService.error('Kích hoạt thất bại.'),
+            error: (error) => this._nzMessageService.error(error),
+            finalize: () => this.updateLoading(false),
+          }),
+          catchError(() => EMPTY)
+        )
+      )
+    )
+  );
+
+  readonly updateStaffShift = this.effect<{model: PlanDailyUpdateModalApi.Request, id: number, modalRef: NzModalRef}>(
+    pipe(
+      tap(() => this.updateLoading(true)),
+      switchMap(({model, id, modalRef}) =>
+        this._sApiSvc.updateStaffShift(id, model).pipe(
+          tap({
+            next: (resp) => {
+              this._nzMessageService.success('Đã cập nhật ca làm.');
+              this.getPlanPaging()
+              modalRef.close()
+            },
+            error: (error) => this._nzMessageService.error(error),
             finalize: () => this.updateLoading(false),
           }),
           catchError(() => EMPTY)

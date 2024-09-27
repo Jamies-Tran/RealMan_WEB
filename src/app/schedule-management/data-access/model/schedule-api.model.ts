@@ -37,8 +37,26 @@ export namespace PlanWeeklyDetailApi {
       dailyPlanStatusCode: string;
       dailyPlanStatusName: string;
       dailyPlans: dailyPlanAccounts;
+      dailyPlanServices: dailyPlanServices;
     };
   }
+
+  export type dailyPlanServices = {
+    dailyPlanServiceId: number;
+    dailyPlanId: number;
+    weeklyPlanId: number;
+    branchId: number;
+    shopServiceId: string;
+    branchServiceId: string;
+    shopServiceName: string;
+    branchServicePrice: number;
+    shopServicePrice: number;
+    categoryCode: string;
+    categoryName: string;
+    estimateDuration: string;
+    durationUnitCode: string;
+    durationUnitName: string;
+  }[];
 
   export type dailyPlanAccounts = {
     weeklyPlanId: number;

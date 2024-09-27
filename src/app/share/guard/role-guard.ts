@@ -7,7 +7,7 @@ export const roleGuard: CanActivateFn = (route, state) => {
   const _router = inject(Router);
 
   route.data['role'].forEach((role: string) => {
-    if (roles?.includes(role) || roles?.includes('SHOP_OWNER')) {
+    if (roles?.includes(role) || roles?.includes('SHOPOWNER')) {
       isHavePermissions = true;
     }
   });

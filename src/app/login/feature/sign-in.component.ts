@@ -106,7 +106,9 @@ export class SignInComponent implements OnInit {
         (data) => {
           this._router.navigate(["/homepage"])
           localStorage.setItem('phone', this.validateForm.controls.staffCode.getRawValue())
+          localStorage.setItem('role$', data['value']['roleCode'])
           localStorage.setItem('token$', data['value']['accessToken'])
+          localStorage.setItem('branchId$', data['value']['branchId'])
         },
         (error) => {this._nzMessageService.error(error);
         }

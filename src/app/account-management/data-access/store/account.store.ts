@@ -80,7 +80,7 @@ export class AccountStore extends ComponentStore<AccountState> {
     sorter: '',
     orderDescending: false,
     role: RoleType.STAFF,
-    branchId: localStorage.getItem('branchId$')! === null ? '' : localStorage.getItem('branchId$')!,
+    branchId: localStorage.getItem('branchId$')! === 'null' ? '' : localStorage.getItem('branchId$')!,
   };
 
   accountStaffId : string[] = (this._activatedRoute.snapshot.paramMap.getAll('account'));

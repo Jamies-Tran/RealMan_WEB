@@ -7,7 +7,7 @@ import {
 import { catchError, throwError } from 'rxjs';
 import { Paging } from 'src/app/share/data-access/model/paging.type';
 import { PlanCreateApi, PlanPagingApi, PlanWeeklyDetailApi } from '../model/schedule-api.model';
-import { PlanDailyApi } from '../model/plan-daily-api.model';
+import { PlanDailyApi, PlanDailyUpdateModalApi } from '../model/plan-daily-api.model';
 
 @Injectable({
   providedIn: 'root',
@@ -61,6 +61,14 @@ export class ScheduleApiService {
       .put<any>(url,null ,this.httpOptions)
       .pipe(catchError(this.handleError));
   }
+
+  public updateStaffShift(id: number, model: PlanDailyUpdateModalApi.Request) {
+    const url = `${this.REST_API_SERVER}/web/daily-plan/${id}`;
+    return this._http
+      .put<any>(url,model ,this.httpOptions)
+      .pipe(catchError(this.handleError));
+  }
+
 
 
   // public updateBranch(id: number, model: BranchUpdateApi.Request) {

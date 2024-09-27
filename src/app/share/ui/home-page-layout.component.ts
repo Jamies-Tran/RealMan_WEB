@@ -61,6 +61,7 @@ import { NzDropDownModule } from 'ng-zorro-antd/dropdown';
             nz-menu-item
             nzMatchRouter
             [routerLink]="['/account-management', 'account-list']"
+            *ngIf="role == 'SHOPOWNER' || 'BRANCHMANAGER'"
           >
             <span nz-icon nzType="home"></span>
             <span>Quản lý nhân viên</span>
@@ -68,7 +69,7 @@ import { NzDropDownModule } from 'ng-zorro-antd/dropdown';
 
           <!-- quản lí chi nhánh -->
 
-          <li nz-submenu nzTitle="Quản lý chi nhánh" nzIcon="team">
+          <li nz-submenu nzTitle="Quản lý chi nhánh" nzIcon="team" *ngIf="role == 'SHOPOWNER'">
             <ul>
               <li
                 nz-menu-item
@@ -90,12 +91,13 @@ import { NzDropDownModule } from 'ng-zorro-antd/dropdown';
 
 <!-- quản lí dịch vụ -->
 
-          <li nz-submenu nzTitle="Quản lý dịch vụ" nzIcon="team">
+          <li nz-submenu nzTitle="Quản lý dịch vụ" nzIcon="team" *ngIf="role == 'SHOPOWNER' || 'BRANCHMANAGER'">
             <ul>
               <li
                 nz-menu-item
                 nzMatchRouter
                 [routerLink]="['/service-management', 'service-list']"
+                *ngIf="role == 'SHOPOWNER' || 'BRANCHMANAGER'"
               >
                 Danh sách dịch vụ
               </li>
@@ -103,17 +105,19 @@ import { NzDropDownModule } from 'ng-zorro-antd/dropdown';
                 nz-menu-item
                 [routerLink]="['/service-management', 'create-service']"
                 nzMatchRouter
+                *ngIf="role == 'SHOPOWNER'"
               >
                 Tạo dịch vụ
               </li>
             </ul>
           </li>
 
-          <!-- quản lí booking -->
+          <!-- quản lí lịch -->
           <li
             nz-menu-item
             nzMatchRouter
             [routerLink]="['/schedule-management', 'schedule']"
+            *ngIf="role == 'BRANCHMANAGER'"
           >
             <span nz-icon nzType="home"></span>
             <span>Quản lý lịch làm</span>
@@ -140,7 +144,7 @@ import { NzDropDownModule } from 'ng-zorro-antd/dropdown';
           </li>
 
 
-          <li nz-submenu nzTitle="Quản lý doanh thu" nzIcon="money-collect"  *ngIf="role == 'SHOP_OWNER'">
+          <li nz-submenu nzTitle="Quản lý doanh thu" nzIcon="money-collect"  *ngIf="role == 'SHOPOWNER'">
             <ul>
               <li nz-menu-item>Tổng doanh thu</li>
             </ul>

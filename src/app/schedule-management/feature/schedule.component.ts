@@ -17,6 +17,9 @@ import { RxLet } from '@rx-angular/template/let';
 import { ScheduleStore } from '../data-access/store/schedule.store';
 import { MapShiftTypeNamePipe } from '../until/shift.pipe';
 import { NzTableDefaultSettingDirective } from 'src/app/share/ui/directive/nz-table-default-setting.directive';
+import { PlanDailyUpdateModalComponent } from '../ui/plan-daily-update-modal.component';
+import { PlanDailyUpdateModalApi } from '../data-access/model/plan-daily-api.model';
+import { tap } from 'rxjs';
 
 @Component({
   selector: 'app-schedule',
@@ -142,18 +145,23 @@ import { NzTableDefaultSettingDirective } from 'src/app/share/ui/directive/nz-ta
                   >
                     <thead>
                       <tr>
-                        <th>Ngày</th>
                         <th>Thứ</th>
-                        <th nzWidth="110px"></th>
+                        <th>Ngày</th>
+                        <th>Dịch vụ trong ngày</th>
+                        <th nzWidth=""></th>
                       </tr>
                     </thead>
                     <tbody
                       *ngFor="let item of vm.planWeeklyDetail.value.dailyPlans"
                     >
                       <tr>
-                        <td>{{ item.date }}</td>
                         <td>{{ item.dayInWeekName }}</td>
-                        <td>
+                        <td>{{ item.date }}</td>
+                        <td *ngFor="let itemS of vm.planWeeklyDetail.value.dailyPlanServices">{{ itemS.shopServiceName }}</td>
+                        <td class="tw-text-center">
+                          <button nz-button class="tw-ml-3" nzType="primary">
+                            Chỉnh sửa dịch vụ
+                          </button>
                           <button
                             nz-button
                             class="tw-ml-3"
@@ -179,7 +187,9 @@ import { NzTableDefaultSettingDirective } from 'src/app/share/ui/directive/nz-ta
                           </button>
                         </td>
                       </tr>
-                      <tr *ngIf="sStore.pagingSubRowExpand.has(item.dailyPlanId)">
+                      <tr
+                        *ngIf="sStore.pagingSubRowExpand.has(item.dailyPlanId)"
+                      >
                         <td colSpan="17">
                           <nz-table
                             [nzData]="
@@ -201,14 +211,28 @@ import { NzTableDefaultSettingDirective } from 'src/app/share/ui/directive/nz-ta
                             <tbody>
                               <tr
                                 *ngFor="
-                                  let itemDaily of vm.planDaily.value.dailyPlanAccounts
+                                  let itemDaily of vm.planDaily.value
+                                    .dailyPlanAccounts
                                 "
                               >
                                 <td>{{ itemDaily.fullName }}</td>
                                 <td>{{ itemDaily.phone }}</td>
                                 <td>{{ itemDaily.shiftName }}</td>
                                 <td>
-                                  <button nz-button nzType="primary">
+                                  <button
+                                    nz-button
+                                    nzType="primary"
+                                    (click)="
+                                      onUpdatePlanDaily(
+                                        itemDaily.dailyPlanId,
+                                        itemDaily.accountId,
+                                        itemDaily.professionalTypeCode,
+                                        itemDaily.shiftCode,
+                                        itemDaily.shiftName,
+                                        itemDaily.fullName
+                                      )
+                                    "
+                                  >
                                     Chỉnh sửa
                                   </button>
                                 </td>
@@ -306,7 +330,6 @@ export class ScheduleComponent implements OnInit {
   }
 
   onEditSubRow(id: number) {
-
     console.log(this.sStore.pagingSubRowExpand);
     this.sStore.pagingSubRowExpand.clear();
     this.sStore.pagingSubRowExpand.add(id);
@@ -324,5 +347,47 @@ export class ScheduleComponent implements OnInit {
 
   onActive(id: number) {
     this.sStore.activeWeeklyPlan(id);
+  }
+
+  onUpdatePlanDaily(
+    planDailyId: string,
+    accountId: string,
+    serviceAssignmentCode: string,
+    shiftCode: string,
+    shiftName: string,
+    fullName: string
+  ) {
+    const modalRef = this._nzModalSvc.create({
+      nzTitle: 'Cập nhật ca làm',
+      nzContent: PlanDailyUpdateModalComponent,
+    });
+
+    const form = this._fb.group<PlanDailyUpdateModalApi.RequestFormGroup>({
+      services: this._fb.control([]),
+      staffs: this._fb.control([]),
+      staff: this._fb.control({value: fullName , disabled: true}),
+      shiftCode: this._fb.control(shiftCode),
+    });
+
+    modalRef.componentInstance!.form = form;
+    modalRef
+      .componentInstance!.clickSubmit.pipe(
+        tap(() => {
+          form.controls.staffs.setValue([
+            {
+              accountId: accountId,
+              serviceAssignmentCode: serviceAssignmentCode,
+              shiftCode: form.controls.shiftCode.value,
+              shiftName: form.controls.shiftCode.value === "MORNING_SHIFT" ? 'Ca Sáng' : 'Ca tối',
+            },
+          ]);
+          this.sStore.updateStaffShift({
+            model: form.getRawValue(),
+            id: Number(planDailyId),
+            modalRef,
+          });
+        })
+      )
+      .subscribe();
   }
 }

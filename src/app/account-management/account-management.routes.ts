@@ -15,6 +15,8 @@ const ACCOUNT_MANAGEMENT_ROUTES: Route[] = [
       import('./feature/account-list.component').then(
         (m) => m.AccountListComponent
       ),
+      data: { role: ['SHOPOWNER', 'BRANCHMANAGER'] },
+      canActivate: [roleGuard]
   },
 ];
 export default ACCOUNT_MANAGEMENT_ROUTES;

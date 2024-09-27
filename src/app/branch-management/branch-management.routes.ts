@@ -14,11 +14,15 @@ const BRANCH_MANAGEMENT_ROUTES: Route[] = [
       import('./feature/branch-list.component').then(
         (m) => m.BranchListComponent
       ),
+      data: { role: ['SHOPOWNER'] },
+      canActivate: [roleGuard]
   },
   {
     path: 'create-branch',
     loadComponent: () =>
       import('./feature/branch.component').then((m) => m.BranchComponent),
+    data: { role: ['SHOPOWNER'] },
+    canActivate: [roleGuard]
   },
   {
     path: ':id',
@@ -26,6 +30,8 @@ const BRANCH_MANAGEMENT_ROUTES: Route[] = [
       import('./feature/branch-update.component').then(
         (m) => m.BranchUpdateComponent
       ),
+      data: { role: ['SHOPOWNER'] },
+      canActivate: [roleGuard]
   },
 ];
 export default BRANCH_MANAGEMENT_ROUTES;
