@@ -110,7 +110,7 @@ export class BranchStore
     orderDescending: false,
     role: RoleType.STAFF,
     branchId:
-      localStorage.getItem('branchId$')! === null
+      localStorage.getItem('branchId$')! === 'null'
         ? ''
         : localStorage.getItem('branchId$')!,
   };
@@ -220,8 +220,8 @@ export class BranchStore
               modalRef.close()
               this.getBranchPaging()
             },
-            error: () =>
-              this._nzMessageService.error('Kích hoạt chi nhánh thất bại.'),
+            error: (error) =>
+              this._nzMessageService.error(error),
             finalize: () => this.updateLoading(false),
           }),
           catchError(() => EMPTY)

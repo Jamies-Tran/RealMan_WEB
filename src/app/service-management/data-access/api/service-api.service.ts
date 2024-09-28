@@ -45,7 +45,7 @@ export class ServiceApiService {
   }
 
   public paging(model: ServicePagingApi.Request) {
-    const url = `${this.REST_API_SERVER}/web/shop-service?branchId=${localStorage.getItem('branchId$')! === null ? '' : localStorage.getItem('branchId$')!}&current=${model.current}&sorter=${model.sorter}&pageSize=${model.pageSize}`;
+    const url = `${this.REST_API_SERVER}/web/shop-service?branchId=${localStorage.getItem('branchId$')! === 'null' ? '' : localStorage.getItem('branchId$')!}&current=${model.current}&sorter=${model.sorter}&pageSize=${model.pageSize}`;
     return this._http
       .get<Paging<ServicePagingApi.Response>>(url, this.httpOptions)
       .pipe(catchError(this.handleError));
