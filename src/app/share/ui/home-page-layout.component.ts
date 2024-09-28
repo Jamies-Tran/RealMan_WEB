@@ -123,7 +123,7 @@ import { NzDropDownModule } from 'ng-zorro-antd/dropdown';
             <span>Quản lý lịch làm</span>
           </li>
 
-          <li nz-submenu nzTitle="Quản lý booking" nzIcon="team" *ngIf="role == 'RECEPTIONIST' || role == 'BRANCH_MANAGER'">
+          <li nz-submenu nzTitle="Quản lý booking" nzIcon="team">
             <ul>
               <li
                 nz-menu-item
@@ -136,7 +136,6 @@ import { NzDropDownModule } from 'ng-zorro-antd/dropdown';
                 nz-menu-item
                 [routerLink]="['/booking-management', 'create-booking']"
                 nzMatchRouter
-                *ngIf="role == 'RECEPTIONIST' || role == 'BRANCH_MANAGER'"
               >
                 Tạo booking
               </li>
